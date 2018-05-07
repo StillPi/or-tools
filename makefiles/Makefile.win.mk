@@ -70,19 +70,7 @@ endif
 ATTRIB = attrib
 TASKKILL = taskkill
 
-# Default paths for libraries and binaries.
-WINDOWS_ZLIB_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
-WINDOWS_ZLIB_NAME ?= zlib.lib
-WINDOWS_GFLAGS_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
-WINDOWS_GLOG_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
-WINDOWS_PROTOBUF_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
-WINDOWS_CBC_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
-WINDOWS_CLP_DIR ?= $(WINDOWS_CBC_DIR)
-WINDOWS_SWIG_BINARY ?= "$(OR_ROOT_FULL)\\dependencies\\install\\swigwin-$(SWIG_TAG)\\swig.exe"
-
 # Compilation macros.
-PROTOBUF_DIR = $(WINDOWS_PROTOBUF_DIR)
-SWIG_BINARY = $(WINDOWS_SWIG_BINARY)
 DEBUG=/O2 -DNDEBUG
 ifeq ("$(VISUAL_STUDIO_YEAR)","2015")
 CCC=cl /EHsc /MD /nologo /D_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS

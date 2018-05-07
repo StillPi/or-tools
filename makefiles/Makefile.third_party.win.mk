@@ -4,13 +4,28 @@ help_third_party:
 	@tools\grep.exe "^.PHONY: .* #" $(CURDIR)/makefiles/Makefile.third_party.win.mk | tools\sed.exe "s/\.PHONY: \(.*\) # \(.*\)/\1\t\2/"
 	@echo off & echo(
 
+# Checks if the user has overwritten default libraries and binaries.
+WINDOWS_ZLIB_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
+WINDOWS_ZLIB_NAME ?= zlib.lib
+WINDOWS_GFLAGS_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
+WINDOWS_GLOG_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
+WINDOWS_PROTOBUF_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
+WINDOWS_CBC_DIR ?= $(OR_ROOT_FULL)\\dependencies\\install
+WINDOWS_CLP_DIR ?= $(WINDOWS_CBC_DIR)
+WINDOWS_SWIG_BINARY ?= "$(OR_ROOT_FULL)\\dependencies\\install\\swigwin-$(SWIG_TAG)\\swig.exe"
+
+# Variable use in others Makefiles
+PROTOBUF_DIR = $(WINDOWS_PROTOBUF_DIR)
+SWIG_BINARY = $(WINDOWS_SWIG_BINARY)
+
 # tags of dependencies to checkout.
-GFLAGS_TAG = 2.2.1
-PROTOBUF_TAG = 3.5.1
-GLOG_TAG = 0.3.5
-CBC_TAG = 2.9.9
 ZLIB_TAG = 1.2.11
 ZLIB_ARCHIVE_TAG = 1211
+GFLAGS_TAG = 2.2.1
+GLOG_TAG = 0.3.5
+PROTOBUF_TAG = 3.5.1
+CBC_TAG = 2.9.9
+CLP_TAG = 1.16.11
 SWIG_TAG = 3.0.12
 
 # Added in support of clean third party targets
