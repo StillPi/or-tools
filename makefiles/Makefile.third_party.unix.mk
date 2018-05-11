@@ -189,7 +189,7 @@ dependencies/sources/protobuf-$(PROTOBUF_TAG): patches/protobuf.patch | dependen
     git apply $(OR_TOOLS_TOP)/patches/protobuf.patch
 
 # Install Java protobuf
-dependencies/install/lib/protobuf.jar: dependencies/install/bin/protoc
+dependencies/install/lib/protobuf.jar: build_protobuf
 	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java && \
 	  ../../../install/bin/protoc --java_out=core/src/main/java -I../src \
 	  ../src/google/protobuf/descriptor.proto
