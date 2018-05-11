@@ -894,20 +894,21 @@ endif
 .PHONY: detect_cc # Show variables used to build C++ OR-Tools.
 detect_cc:
 	@echo Relevant info for the C++ build:
+	@echo PROTOC = $(PROTOC)
+	@echo GEN_DIR = $(GEN_DIR)
 	@echo CCC = $(CCC)
 	@echo CFLAGS = $(CFLAGS)
 	@echo LINK_CMD = $(LINK_CMD)
-	@echo OR_TOOLS_LIBS = $(OR_TOOLS_LIBS)
-	@echo OR_TOOLS_LNK = $(OR_TOOLS_LNK)
-	@echo OR_TOOLS_LD_FLAGS = $(OR_TOOLS_LD_FLAGS)
 	@echo DEPENDENCIES_LNK = $(DEPENDENCIES_LNK)
-	@echo LIB_DIR = $(LIB_DIR)
-	@echo BIN_DIR = $(BIN_DIR)
-	@echo GEN_DIR = $(GEN_DIR)
-	@echo OBJ_DIR = $(OBJ_DIR)
+	@echo OR_TOOLS_LD_FLAGS = $(OR_TOOLS_LD_FLAGS)
 	@echo SRC_DIR = $(SRC_DIR)
 	@echo EX_DIR  = $(EX_DIR)
+	@echo OBJ_DIR = $(OBJ_DIR)
+	@echo LIB_DIR = $(LIB_DIR)
+	@echo BIN_DIR = $(BIN_DIR)
 	@echo prefix  = $(prefix)
+	@echo OR_TOOLS_LNK = $(OR_TOOLS_LNK)
+	@echo OR_TOOLS_LIBS = $(OR_TOOLS_LIBS)
 ifeq ($(SYSTEM),win)
 	@echo off & echo(
 else
