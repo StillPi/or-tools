@@ -126,25 +126,36 @@ clean_python:
 	-$(DEL) $(OBJ_DIR)$Sswig$S*python_wrap.$O
 	-$(DELREC) $(PYPI_ARCHIVE_TEMP_DIR)
 
-.PHONY:	install_python_modules pypi_archive pypi_archive_dir pyinit pycp pyalgorithms pygraph pylp pysat pydata
-
+.PHONY: install_python_modules
 install_python_modules: dependencies/sources/protobuf-$(PROTOBUF_TAG)/python/google/protobuf/descriptor_pb2.py
 
 dependencies/sources/protobuf-$(PROTOBUF_TAG)/python/google/protobuf/descriptor_pb2.py: \
 dependencies/sources/protobuf-$(PROTOBUF_TAG)/python/setup.py
 ifeq ($(SYSTEM),win)
 	copy dependencies$Sinstall$Sbin$Sprotoc.exe dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Ssrc
-else
-	cp dependencies$Sinstall$Sbin$Sprotoc dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Ssrc
-endif
 	cd dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Spython && "$(PYTHON_EXECUTABLE)" setup.py build
+else
+ifeq ($(PLATFORM),LINUX)
+	cd dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Spython && \
+ LD_LIBRARY_PATH="$(UNIX_PROTOBUF_DIR)/lib":$(LD_LIBRARY_PATH) \
+ PROTOC=$(PROTOC_BINARY) \
+ "$(PYTHON_EXECUTABLE)" setup.py build
+else # MacOS
+	cd dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Spython && \
+ DYLD_LIBRARY_PATH="$(UNIX_PROTOBUF_DIR)/lib":$(DYLD_LIBRARY_PATH) \
+ PROTOC=$(PROTOC_BINARY) \
+ "$(PYTHON_EXECUTABLE)" setup.py build
+endif
+endif
 
+.PHONY: pyinit
 pyinit: $(GEN_DIR)/ortools/__init__.py
 
 $(GEN_DIR)/ortools/__init__.py:
 	$(COPY) $(SRC_DIR)$Sortools$S__init__.py $(GEN_DIR)$Sortools$S__init__.py
 
 # pywrapknapsack_solver
+.PHONY: pyalgorithms
 pyalgorithms: $(LIB_DIR)/_pywrapknapsack_solver.$(SWIG_LIB_SUFFIX) $(GEN_DIR)/ortools/algorithms/pywrapknapsack_solver.py
 
 $(GEN_DIR)/ortools/algorithms/pywrapknapsack_solver.py: \
@@ -160,7 +171,12 @@ $(OBJ_DIR)/swig/knapsack_solver_python_wrap.$O: $(GEN_DIR)/ortools/algorithms/kn
 	$(CCC) $(CFLAGS) $(PYTHON_INC) $(PYTHON3_CFLAGS) -c $(GEN_DIR)$Sortools$Salgorithms$Sknapsack_solver_python_wrap.cc $(OBJ_OUT)$(OBJ_DIR)$Sswig$Sknapsack_solver_python_wrap.$O
 
 $(LIB_DIR)/_pywrapknapsack_solver.$(SWIG_LIB_SUFFIX): $(OBJ_DIR)/swig/knapsack_solver_python_wrap.$O $(OR_TOOLS_LIBS)
-	$(DYNAMIC_LD) $(LD_OUT)$(LIB_DIR)$S_pywrapknapsack_solver.$(SWIG_LIB_SUFFIX) $(OBJ_DIR)$Sswig$Sknapsack_solver_python_wrap.$O $(OR_TOOLS_LNK) $(SYS_LNK) $(PYTHON_LNK)
+	$(DYNAMIC_LD) \
+ $(LD_OUT)$(LIB_DIR)$S_pywrapknapsack_solver.$(SWIG_LIB_SUFFIX) \
+ $(OBJ_DIR)$Sswig$Sknapsack_solver_python_wrap.$O \
+ $(OR_TOOLS_LNK) \
+ $(SYS_LNK) \
+ $(PYTHON_LNK)
 ifeq ($(SYSTEM),win)
 	copy $(LIB_DIR)\\_pywrapknapsack_solver.dll $(GEN_DIR)\\ortools\\algorithms\\_pywrapknapsack_solver.pyd
 else
@@ -168,6 +184,7 @@ else
 endif
 
 # pywrapgraph
+.PHONY: pygraph
 pygraph: $(LIB_DIR)/_pywrapgraph.$(SWIG_LIB_SUFFIX) $(GEN_DIR)/ortools/graph/pywrapgraph.py
 
 $(GEN_DIR)/ortools/graph/pywrapgraph.py: \
@@ -194,7 +211,7 @@ else
 endif
 
 # pywrapcp
-
+.PHONY: pycp
 pycp: $(GEN_DIR)/ortools/constraint_solver/pywrapcp.py $(LIB_DIR)/_pywrapcp.$(SWIG_LIB_SUFFIX)
 
 $(GEN_DIR)/ortools/constraint_solver/search_limit_pb2.py: $(SRC_DIR)/ortools/constraint_solver/search_limit.proto
@@ -252,7 +269,7 @@ else
 endif
 
 # pywraplp
-
+.PHONY: pylp
 pylp: $(LIB_DIR)/_pywraplp.$(SWIG_LIB_SUFFIX) $(GEN_DIR)/ortools/linear_solver/pywraplp.py
 
 $(GEN_DIR)/ortools/util/optional_boolean_pb2.py: $(SRC_DIR)/ortools/util/optional_boolean.proto
@@ -286,7 +303,7 @@ else
 endif
 
 # pywrapsat
-
+.PHONY: pysat
 pysat: $(LIB_DIR)/_pywrapsat.$(SWIG_LIB_SUFFIX) $(GEN_DIR)/ortools/sat/pywrapsat.py
 
 $(GEN_DIR)/ortools/sat/cp_model_pb2.py: $(SRC_DIR)/ortools/sat/cp_model.proto
@@ -382,10 +399,12 @@ PYPI_ARCHIVE_TEMP_DIR = temp-python$(PYTHON_VERSION)
 OR_TOOLS_PYTHON_GEN_SCRIPTS = $(wildcard src/gen/ortools/*/*.py) $(wildcard src/gen/ortools/*/*.cc)
 
 # Stages all the files needed to build the python package.
+.PHONY: pypi_archive_dir
 pypi_archive_dir: python $(PYPI_ARCHIVE_TEMP_DIR)
 
 # Patches the archive files to be able to build a pypi package.
 # Graft libortools if needed and set RPATHs.
+.PHONY: pypi_archive
 pypi_archive: pypi_archive_dir $(PATCHELF)
 ifneq ($(SYSTEM),win)
 	cp lib/libortools.$L $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools
