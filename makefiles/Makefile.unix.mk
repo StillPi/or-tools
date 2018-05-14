@@ -207,7 +207,9 @@ ifeq ($(PLATFORM),MACOSX)
   PRE_LIB = -L$(OR_ROOT)lib -l
   POST_LIB =
   LINK_FLAGS = \
- -Wl,-rpath,@loader_path -Wl,-rpath,@loader_path/../lib -Wl,-rpath,@loader_path/../dependencies/install/lib
+ -Wl,-rpath,@loader_path \
+ -Wl,-rpath,@loader_path/../lib \
+ -Wl,-rpath,@loader_path/../dependencies/install/lib
 endif  # MAC OS X
 
 DEPENDENCIES_INC = -I$(INC_DIR) -I$(EX_DIR) -I$(GEN_DIR) \
