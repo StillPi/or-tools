@@ -242,7 +242,8 @@ dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L dependenc
     --with-pic \
     --enable-dependency-linking \
     --enable-cbc-parallel \
-    ADD_CXXFLAGS="-w -DCBC_THREAD_SAFE -DCBC_NO_INTERRUPT $(MAC_VERSION)" && \
+    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
+    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
   $(SET_COMPILER) make -j 4 && \
   $(SET_COMPILER) make install
 
@@ -277,7 +278,8 @@ dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L dependenc
     --without-glpk \
     --with-pic \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" && \
+    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
+    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
   $(SET_COMPILER) make -j 4 && \
   $(SET_COMPILER) make install
 
@@ -310,7 +312,8 @@ dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L dependenc
     --without-glpk \
     --with-pic \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" && \
+    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
+    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
   $(SET_COMPILER) make -j 4 && \
   $(SET_COMPILER) make install
 
@@ -346,7 +349,8 @@ dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L dep
     --with-pic \
     --with-coinutils \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" && \
+    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
+    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
   $(SET_COMPILER) make -j 4 && \
   $(SET_COMPILER) make install
 
@@ -379,7 +383,8 @@ dependencies/install/lib/libCoinUtils.$L: dependencies/sources/CoinUtils-$(COINU
     --without-glpk \
     --with-pic \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" && \
+    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
+    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
   $(SET_COMPILER) make -j 4 && \
   $(SET_COMPILER) make install
 

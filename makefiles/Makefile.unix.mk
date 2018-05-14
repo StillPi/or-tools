@@ -98,6 +98,7 @@ JNIDEBUG = -O1 -DNDEBUG
 ifeq ($(PLATFORM),LINUX)
   CCC = g++ -fPIC -std=c++11 -fwrapv
   DYNAMIC_LD = g++ -shared
+  DYNAMIC_LDFLAGS = -Wl,-rpath,\"\\\$$\$$ORIGIN\"
   MONO = LD_LIBRARY_PATH=$(LIB_DIR):$(LD_LIBRARY_PATH) $(MONO_EXECUTABLE)
 
   # This is needed to find libz.a
@@ -163,7 +164,7 @@ ifeq ($(PLATFORM),MACOSX)
  -macosx_version_min $(MAC_MIN_VERSION) -lSystem \
  -compatibility_version $(OR_TOOLS_SHORT_VERSION) \
  -current_version $(OR_TOOLS_SHORT_VERSION)
-
+  DYNAMIC_LDFLAGS = -Wl,-rpath,\"@loader_path\"
   MONO =  DYLD_FALLBACK_LIBRARY_PATH=$(LIB_DIR):$(DYLD_LIBRARY_PATH) $(MONO_EXECUTABLE)
 
   ZLIB_LNK = -lz
