@@ -220,21 +220,25 @@ OR_TOOLS_LNK += $(PRE_LIB)ortools$(POST_LIB)
 ortoolslibs: third_party_check $(MISSING_BUILD_DIRECTORIES) $(OR_TOOLS_LIBS)
 
 # Specific libraries for examples, and flatzinc.
-
-CVRPTW_LIBS   = $(LIB_DIR)/$(LIB_PREFIX)cvrptw_lib.$L
+CVRPTW_LIBS = $(LIB_DIR)/$(LIB_PREFIX)cvrptw_lib.$L
 CVRPTW_DEPS = \
 	$(EX_DIR)/cpp/cvrptw_lib.h \
 	$(CP_DEPS) $(SRC_DIR)/ortools/constraint_solver/routing.h
 CVRPTW_LNK = $(PRE_LIB)cvrptw_lib$(POST_LIB) $(OR_TOOLS_LNK)
+ifeq ($(PLATFORM),MACOSX)
+CVRPTW_LDFLAGS = -install_name @rpath/$(LIB_PREFIX)cvrptw_lib.$L #
+endif
 cvrptwlibs: $(CVRPTW_LIBS)
 
-
-DIMACS_LIBS   = $(LIB_DIR)/$(LIB_PREFIX)dimacs.$L
+DIMACS_LIBS = $(LIB_DIR)/$(LIB_PREFIX)dimacs.$L
 DIMACS_DEPS = \
 	$(EX_DIR)/cpp/parse_dimacs_assignment.h \
 	$(EX_DIR)/cpp/print_dimacs_assignment.h \
 	$(GRAPH_DEPS)
 DIMACS_LNK = $(PRE_LIB)dimacs$(POST_LIB) $(OR_TOOLS_LNK)
+ifeq ($(PLATFORM),MACOSX)
+DIMACS_LDFLAGS = -install_name @rpath/$(LIB_PREFIX)cvrptw_lib.$L #
+endif
 dimacslibs: $(DIMACS_LIBS)
 
 FAP_LIBS = $(LIB_DIR)/$(LIB_PREFIX)fap.$L
@@ -245,8 +249,10 @@ FAP_DEPS = \
 	$(CP_DEPS) \
 	$(LP_DEPS)
 FAP_LNK = $(PRE_LIB)fap$(POST_LIB) $(OR_TOOLS_LNK)
+ifeq ($(PLATFORM),MACOSX)
+FAP_LDFLAGS = -install_name @rpath/$(LIB_PREFIX)cvrptw_lib.$L #
+endif
 faplibs: $(FAP_LIBS)
-
 
 FLATZINC_LIBS = $(LIB_DIR)/$(LIB_PREFIX)fz.$L
 FLATZINC_DEPS = \
@@ -267,6 +273,9 @@ FLATZINC_DEPS = \
 	$(CP_DEPS) \
 	$(SAT_DEPS)
 FLATZINC_LNK = $(PRE_LIB)fz$(POST_LIB) $(OR_TOOLS_LNK)
+ifeq ($(PLATFORM),MACOSX)
+FLATZINK_LDFLAGS = -install_name @rpath/$(LIB_PREFIX)cvrptw_lib.$L #
+endif
 
 # Binaries
 CC_EXAMPLES = \
@@ -311,37 +320,32 @@ weighted_tardiness_sat
 ccexe: $(addsuffix $E, $(addprefix $(BIN_DIR)/, $(CC_EXAMPLES)))
 
 # CVRPTW common library
-
-CVRPTW_OBJS=\
-	$(OBJ_DIR)/cvrptw_lib.$O
-
-$(OBJ_DIR)/cvrptw_lib.$O: $(EX_DIR)/cpp/cvrptw_lib.cc $(EX_DIR)/cpp/cvrptw_lib.h 	$(CP_DEPS) $(SRC_DIR)/ortools/constraint_solver/routing.h
+CVRPTW_OBJS= $(OBJ_DIR)/cvrptw_lib.$O
+$(CVRPTW_OBJS): $(EX_DIR)/cpp/cvrptw_lib.cc $(EX_DIR)/cpp/cvrptw_lib.h 	$(CP_DEPS) $(SRC_DIR)/ortools/constraint_solver/routing.h
 	$(CCC) $(CFLAGS) -c $(EX_DIR)$Scpp/cvrptw_lib.cc $(OBJ_OUT)$(OBJ_DIR)$Scvrptw_lib.$O
 
-$(LIB_DIR)/$(LIB_PREFIX)cvrptw_lib.$L: ortoolslibs $(CVRPTW_OBJS)
+$(CVRPTW_LIBS): ortoolslibs $(CVRPTW_OBJS)
 	$(LINK_CMD) \
+ $(CVRPTW_LDFLAGS) \
  $(LD_OUT)$(LIB_DIR)$S$(LIB_PREFIX)cvrptw_lib.$L \
  $(CVRPTW_OBJS) \
  $(OR_TOOLS_LNK) \
  $(OR_TOOLS_LD_FLAGS)
 
 # DIMACS challenge problem format library
-
-DIMACS_OBJS=\
-	$(OBJ_DIR)/parse_dimacs_assignment.$O
-
-$(OBJ_DIR)/parse_dimacs_assignment.$O: $(EX_DIR)/cpp/parse_dimacs_assignment.cc
+DIMACS_OBJS= $(OBJ_DIR)/parse_dimacs_assignment.$O
+$(DIMACS_OBJS): $(EX_DIR)/cpp/parse_dimacs_assignment.cc
 	$(CCC) $(CFLAGS) -c $(EX_DIR)$Scpp/parse_dimacs_assignment.cc $(OBJ_OUT)$(OBJ_DIR)$Sparse_dimacs_assignment.$O
 
-$(LIB_DIR)/$(LIB_PREFIX)dimacs.$L: ortoolslibs $(DIMACS_OBJS)
+$(DIMACS_LIBS): ortoolslibs $(DIMACS_OBJS)
 	$(LINK_CMD) \
+ $(DIMACS_LDFLAGS) \
  $(LD_OUT)$(LIB_DIR)$S$(LIB_PREFIX)dimacs.$L \
  $(DIMACS_OBJS) \
  $(OR_TOOLS_LNK) \
  $(OR_TOOLS_LD_FLAGS)
 
 # FAP challenge problem format library
-
 FAP_OBJS=\
 	$(OBJ_DIR)/fap_model_printer.$O \
 	$(OBJ_DIR)/fap_parser.$O \
@@ -354,15 +358,15 @@ $(OBJ_DIR)/fap_parser.$O: $(EX_DIR)/cpp/fap_parser.cc
 $(OBJ_DIR)/fap_utilities.$O: $(EX_DIR)/cpp/fap_utilities.cc
 	$(CCC) $(CFLAGS) -c $(EX_DIR)$Scpp$Sfap_utilities.cc $(OBJ_OUT)$(OBJ_DIR)$Sfap_utilities.$O
 
-$(LIB_DIR)/$(LIB_PREFIX)fap.$L: ortoolslibs $(FAP_OBJS)
+$(FAP_LIBS): ortoolslibs $(FAP_OBJS)
 	$(LINK_CMD) \
+ $(FAP_LDFLAGS) \
  $(LD_OUT)$(LIB_DIR)$S$(LIB_PREFIX)fap.$L \
  $(FAP_OBJS) \
  $(OR_TOOLS_LNK) \
  $(OR_TOOLS_LD_FLAGS)
 
 # Flatzinc code
-
 FLATZINC_OBJS=\
 	$(OBJ_DIR)/flatzinc/checker.$O \
 	$(OBJ_DIR)/flatzinc/constraints.$O \
@@ -429,8 +433,9 @@ $(OBJ_DIR)/flatzinc/solver_data.$O: $(SRC_DIR)/ortools/flatzinc/solver_data.cc $
 $(OBJ_DIR)/flatzinc/solver_util.$O: $(SRC_DIR)/ortools/flatzinc/solver_util.cc $(FLATZINC_DEPS)
 	$(CCC) $(CFLAGS) -c $(SRC_DIR)$Sortools$Sflatzinc$Ssolver_util.cc $(OBJ_OUT)$(OBJ_DIR)$Sflatzinc$Ssolver_util.$O
 
-$(LIB_DIR)/$(LIB_PREFIX)fz.$L: ortoolslibs $(FLATZINC_OBJS)
+$(FLATZINC_LIBS): ortoolslibs $(FLATZINC_OBJS)
 	$(LINK_CMD) \
+ $(FLATZINK_LDFLAGS) \
  $(LD_OUT)$(LIB_DIR)$S$(LIB_PREFIX)fz.$L \
  $(FLATZINC_OBJS) \
  $(OR_TOOLS_LNK) \
