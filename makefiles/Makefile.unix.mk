@@ -210,6 +210,7 @@ ifeq ($(PLATFORM),MACOSX)
  -Wl,-rpath,@loader_path \
  -Wl,-rpath,@loader_path/../lib \
  -Wl,-rpath,@loader_path/../dependencies/install/lib
+  LD_FLAGS = -install_name @rpath/$(LIB_PREFIX)ortools.$L #
 endif  # MAC OS X
 
 DEPENDENCIES_INC = -I$(INC_DIR) -I$(EX_DIR) -I$(GEN_DIR) \
@@ -220,7 +221,8 @@ DEPENDENCIES_INC = -I$(INC_DIR) -I$(EX_DIR) -I$(GEN_DIR) \
 
 CFLAGS = $(DEBUG) $(DEPENDENCIES_INC)
 JNIFLAGS = $(JNIDEBUG) $(DEPENDENCIES_INC)
-LD_FLAGS = $(ZLIB_LNK) $(SYS_LNK) $(LINK_FLAGS)
+LD_FLAGS += $(ZLIB_LNK) $(SYS_LNK) $(LINK_FLAGS)
 DEPENDENCIES_LNK = $(GLPK_LNK) $(SCIP_LNK) $(GUROBI_LNK) $(CPLEX_LNK)
 
+OR_TOOLS_LNK =
 OR_TOOLS_LD_FLAGS = $(ZLIB_LNK) $(SYS_LNK) $(LINK_FLAGS)
