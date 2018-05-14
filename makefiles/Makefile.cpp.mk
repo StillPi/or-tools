@@ -812,7 +812,7 @@ $(LIB_DIR)/$(LIB_PREFIX)ortools.$L: \
  $(LP_LIB_OBJS) \
  $(CP_LIB_OBJS) \
  $(DEPENDENCIES_LNK) \
- $(OR_TOOLS_LD_FLAGS)
+ $(LD_FLAGS)
 
 # compile and run C++ examples
 .PHONY: ccc
