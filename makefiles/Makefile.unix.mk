@@ -3,16 +3,12 @@
 #  ----- about it. -----
 
 LIB_PREFIX = lib
-ifeq ($(PLATFORM),MACOSX) # Keep the path in the lib as it is stored upon construction.
-LIB_DIR = $(OR_ROOT_FULL)/lib
-else # No need to keep the path in the lib, it is not stored there on linux.
-LIB_DIR = $(OR_ROOT)lib
-endif
-BIN_DIR = $(OR_ROOT)bin
-GEN_DIR = $(OR_ROOT)ortools/gen
-OBJ_DIR = $(OR_ROOT)objs
 SRC_DIR = $(OR_ROOT).
 EX_DIR  = $(OR_ROOT)examples
+GEN_DIR = $(OR_ROOT)ortools/gen
+OBJ_DIR = $(OR_ROOT)objs
+LIB_DIR = $(OR_ROOT)lib
+BIN_DIR = $(OR_ROOT)bin
 INC_DIR = $(OR_ROOT).
 DEP_BIN_DIR = $(OR_ROOT)dependencies/install/bin
 
