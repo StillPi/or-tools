@@ -231,21 +231,21 @@ endif
 ###################
 build_cbc: dependencies/install/lib/libCbc.$L
 
-dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L dependencies/sources/Cbc-$(CBC_TAG) | dependencies/install/lib
-	cd dependencies/sources/Cbc-$(CBC_TAG) && \
-  $(SET_COMPILER) ./configure \
+CBC_SRCDIR = dependencies/sources/Cbc-$(CBC_TAG)
+dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L $(CBC_SRCDIR) | dependencies/install/lib
+	cd $(CBC_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
     --without-blas \
     --without-lapack \
     --without-glpk \
     --with-pic \
+    --disable-dependency-tracking \
     --enable-dependency-linking \
     --enable-cbc-parallel \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
-    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
-  $(SET_COMPILER) make -j 4 && \
-  $(SET_COMPILER) make install
+    ADD_CXXFLAGS="-w $(MAC_VERSION)"
+	$(SET_COMPILER) make -C $(CBC_SRCDIR)
+	$(SET_COMPILER) make install -C $(CBC_SRCDIR)
 
 dependencies/sources/Cbc-$(CBC_TAG): | dependencies/sources
 	git clone --quiet -b releases/$(CBC_TAG) https://github.com/coin-or/Cbc.git dependencies/sources/Cbc-$(CBC_TAG)
@@ -268,23 +268,23 @@ DYNAMIC_CBC_LNK = -L$(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN) -lCbcSolver -lCbc -lOsiC
 ###################
 build_cgl: dependencies/install/lib/libCgl.$L
 
-dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L dependencies/sources/Cgl-$(CGL_TAG) | dependencies/install/lib
-	cd dependencies/sources/Cgl-$(CGL_TAG) && \
-  $(SET_COMPILER) ./configure \
+CGL_SRCDIR = dependencies/sources/Cgl-$(CGL_TAG)
+dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L $(CGL_SRCDIR) | dependencies/install/lib
+	cd $(CGL_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
     --without-blas \
     --without-lapack \
     --without-glpk \
     --with-pic \
+    --disable-dependency-tracking \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
-    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
-  $(SET_COMPILER) make -j 4 && \
-  $(SET_COMPILER) make install
+    ADD_CXXFLAGS="-w $(MAC_VERSION)"
+	$(SET_COMPILER) make -C $(CGL_SRCDIR)
+	$(SET_COMPILER) make install -C $(CGL_SRCDIR)
 
 dependencies/sources/Cgl-$(CGL_TAG): | dependencies/sources
-	git clone --quiet -b releases/$(CGL_TAG) https://github.com/coin-or/Cgl.git dependencies/sources/Cgl-$(CGL_TAG)
+	git clone --quiet -b releases/$(CGL_TAG) https://github.com/coin-or/Cgl.git $(CGL_SRCDIR)
 
 # This is needed to find CGL include files.
 CGL_COIN_DIR = $(firstword $(wildcard $(UNIX_CGL_DIR)/include/cgl/coin \
@@ -302,23 +302,23 @@ DYNAMIC_CGL_LNK = -L$(UNIX_CGL_DIR)/lib$(UNIX_CGL_COIN) -lCgl
 ###################
 build_clp: dependencies/install/lib/libClp.$L
 
-dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L dependencies/sources/Clp-$(CLP_TAG) | dependencies/install/lib
-	cd dependencies/sources/Clp-$(CLP_TAG) && \
-  $(SET_COMPILER) ./configure \
+CLP_SRCDIR = dependencies/sources/Clp-$(CLP_TAG)
+dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L $(CLP_SRCDIR) | dependencies/install/lib
+	cd $(CLP_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
     --without-blas \
     --without-lapack \
     --without-glpk \
     --with-pic \
+    --disable-dependency-tracking \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
-    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
-  $(SET_COMPILER) make -j 4 && \
-  $(SET_COMPILER) make install
+    ADD_CXXFLAGS="-w $(MAC_VERSION)"
+	$(SET_COMPILER) make -C $(CLP_SRCDIR)
+	$(SET_COMPILER) make install -C $(CLP_SRCDIR)
 
-dependencies/sources/Clp-$(CLP_TAG): | dependencies/sources
-	git clone --quiet -b releases/$(CLP_TAG) https://github.com/coin-or/Clp.git dependencies/sources/Clp-$(CLP_TAG)
+$(CLP_SRCDIR): | dependencies/sources
+	git clone --quiet -b releases/$(CLP_TAG) https://github.com/coin-or/Clp.git $(CLP_SRCDIR)
 
 # This is needed to find CLP include files.
 CLP_COIN_DIR = $(firstword $(wildcard $(UNIX_CLP_DIR)/include/clp/coin \
@@ -338,9 +338,9 @@ DYNAMIC_CLP_LNK = -L$(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN) -lClpSolver -lClp -lOsiC
 ###################
 build_osi: dependencies/install/lib/libOsi.$L
 
-dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L dependencies/sources/Osi-$(OSI_TAG) | dependencies/install/lib
-	cd dependencies/sources/Osi-$(OSI_TAG) && \
-  $(SET_COMPILER) ./configure \
+OSI_SRCDIR = dependencies/sources/Osi-$(OSI_TAG)
+dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L $(OSI_SRCDIR) | dependencies/install/lib
+	cd $(OSI_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
     --without-blas \
@@ -348,14 +348,14 @@ dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L dep
     --without-glpk \
     --with-pic \
     --with-coinutils \
+    --disable-dependency-tracking \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
-    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
-  $(SET_COMPILER) make -j 4 && \
-  $(SET_COMPILER) make install
+    ADD_CXXFLAGS="-w $(MAC_VERSION)"
+	$(SET_COMPILER) make -C $(OSI_SRCDIR)
+	$(SET_COMPILER) make install -C $(OSI_SRCDIR)
 
-dependencies/sources/Osi-$(OSI_TAG): | dependencies/sources
-	git clone --quiet -b releases/$(OSI_TAG) https://github.com/coin-or/Osi.git dependencies/sources/Osi-$(OSI_TAG)
+$(OSI_SRCDIR): | dependencies/sources
+	git clone --quiet -b releases/$(OSI_TAG) https://github.com/coin-or/Osi.git $(OSI_SRCDIR)
 
 # This is needed to find OSI include files.
 OSI_COIN_DIR = $(firstword $(wildcard $(UNIX_OSI_DIR)/include/osi/coin \
@@ -373,23 +373,23 @@ DYNAMIC_OSI_LNK = -L$(UNIX_OSI_DIR)/lib$(UNIX_OSI_COIN) -lOsi
 #########################
 build_coinutils: dependencies/install/lib/libCoinUtils.$L
 
-dependencies/install/lib/libCoinUtils.$L: dependencies/sources/CoinUtils-$(COINUTILS_TAG) | dependencies/install/lib
-	cd dependencies/sources/CoinUtils-$(COINUTILS_TAG) && \
-  $(SET_COMPILER) ./configure \
+COINUTILS_SRCDIR = dependencies/sources/CoinUtils-$(COINUTILS_TAG)
+dependencies/install/lib/libCoinUtils.$L: $(COINUTILS_SRCDIR) | dependencies/install/lib
+	cd $(COINUTILS_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
     --without-blas \
     --without-lapack \
     --without-glpk \
     --with-pic \
+    --disable-dependency-tracking \
     --enable-dependency-linking \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)" \
-    LDFLAGS="$(DYNAMIC_LDFLAGS)" && \
-  $(SET_COMPILER) make -j 4 && \
-  $(SET_COMPILER) make install
+    ADD_CXXFLAGS="-w $(MAC_VERSION)"
+	$(SET_COMPILER) make -j4 -C $(COINUTILS_SRCDIR)
+	$(SET_COMPILER) make install -C $(COINUTILS_SRCDIR)
 
-dependencies/sources/CoinUtils-$(COINUTILS_TAG): | dependencies/sources
-	git clone --quiet -b releases/$(COINUTILS_TAG) https://github.com/coin-or/CoinUtils.git dependencies/sources/CoinUtils-$(COINUTILS_TAG)
+$(COINUTILS_SRCDIR): | dependencies/sources
+	git clone --quiet -b releases/$(COINUTILS_TAG) https://github.com/coin-or/CoinUtils.git $(COINUTILS_SRCDIR)
 
 # This is needed to find COINUTILS include files.
 COINUTILS_COIN_DIR = $(firstword $(wildcard $(UNIX_COINUTILS_DIR)/include/coinutils/coin \
@@ -455,18 +455,19 @@ SWIG_BINARY = $(shell $(WHICH) $(UNIX_SWIG_BINARY))
 ############################################
 # Detect if patchelf is needed
 ifeq ($(PLATFORM), LINUX)
- PATCHELF=dependencies/install/bin/patchelf
+ PATCHELF = dependencies/install/bin/patchelf
 endif
 
-dependencies/install/bin/patchelf: dependencies/sources/patchelf-$(PATCHELF_TAG)/Makefile
-	cd dependencies/sources/patchelf-$(PATCHELF_TAG) && make && make install
+PATCHELF_SRCDIR = dependencies/sources/patchelf-$(PATCHELF_TAG)
+dependencies/install/bin/patchelf: $(PATCHELF_SRCDIR) | dependencies/install/bin
+	cd $(PATCHELF_SRCDIR) && ./configure \
+    --prefix=$(OR_ROOT_FULL)/dependencies/install
+	make -C $(PATCHELF_SRCDIR)
+	make install -C $(PATCHELF_SRCDIR)
 
-dependencies/sources/patchelf-$(PATCHELF_TAG)/Makefile: dependencies/sources/patchelf-$(PATCHELF_TAG)/configure
-	cd dependencies/sources/patchelf-$(PATCHELF_TAG) && ./configure --prefix=$(OR_ROOT_FULL)/dependencies/install
-
-dependencies/sources/patchelf-$(PATCHELF_TAG)/configure:
-	git clone --quiet -b $(PATCHELF_TAG) https://github.com/NixOS/patchelf.git dependencies/sources/patchelf-$(PATCHELF_TAG)
-	cd dependencies/sources/patchelf-$(PATCHELF_TAG) && ./bootstrap.sh
+$(PATCHELF_SRCDIR): | dependencies/sources
+	git clone --quiet -b $(PATCHELF_TAG) https://github.com/NixOS/patchelf.git $(PATCHELF_SRCDIR)
+	cd $(PATCHELF_SRCDIR) && ./bootstrap.sh
 
 .PHONY: clean_third_party # Clean everything. Remember to also delete archived dependencies, i.e. in the event of download failure, etc.
 clean_third_party:
