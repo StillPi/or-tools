@@ -152,7 +152,7 @@ ifeq ($(PLATFORM),LINUX)
   #PRE_LIB = -Wl,-rpath $(OR_ROOT_FULL)/lib -L$(OR_ROOT_FULL)/lib -l
   POST_LIB =
   LINK_FLAGS = -Wl,-rpath,"\$$ORIGIN:\$$ORIGIN/../lib:\$$ORIGIN/../dependencies/install/lib"
-endif  # LINUX
+endif  # ifeq ($(PLATFORM),LINUX)
 ifeq ($(PLATFORM),MACOSX)
   MAC_VERSION = -mmacosx-version-min=$(MAC_MIN_VERSION)
   CCC = clang++ -fPIC -std=c++11  $(MAC_VERSION) -stdlib=libc++
@@ -211,7 +211,7 @@ ifeq ($(PLATFORM),MACOSX)
  -Wl,-rpath,@loader_path/../lib \
  -Wl,-rpath,@loader_path/../dependencies/install/lib
   LD_FLAGS = -install_name @rpath/$(LIB_PREFIX)ortools.$L #
-endif  # MAC OS X
+endif # ifeq ($(PLATFORM),MACOSX)
 
 DEPENDENCIES_INC = -I$(INC_DIR) -I$(EX_DIR) -I$(GEN_DIR) \
  $(GFLAGS_INC) $(GLOG_INC) $(PROTOBUF_INC) \
