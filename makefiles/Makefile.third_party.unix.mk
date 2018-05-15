@@ -226,13 +226,32 @@ else
 DYLD_LIBRARY_PATH="$(UNIX_PROTOBUF_DIR)/lib":$(DYLD_LIBRARY_PATH) $(PROTOC_BINARY)
 endif
 
+############################################
+##  Install Patchelf on linux platforms.  ##
+############################################
+# Detect if patchelf is needed
+ifeq ($(PLATFORM),LINUX)
+ PATCHELF = dependencies/install/bin/patchelf
+endif
+
+PATCHELF_SRCDIR = dependencies/sources/patchelf-$(PATCHELF_TAG)
+dependencies/install/bin/patchelf: $(PATCHELF_SRCDIR) | dependencies/install/bin
+	cd $(PATCHELF_SRCDIR) && ./configure \
+    --prefix=$(OR_ROOT_FULL)/dependencies/install
+	make -C $(PATCHELF_SRCDIR)
+	make install -C $(PATCHELF_SRCDIR)
+
+$(PATCHELF_SRCDIR): | dependencies/sources
+	git clone --quiet -b $(PATCHELF_TAG) https://github.com/NixOS/patchelf.git $(PATCHELF_SRCDIR)
+	cd $(PATCHELF_SRCDIR) && ./bootstrap.sh
+
 ###################
 ##  COIN-OR-CBC  ##
 ###################
 build_cbc: dependencies/install/lib/libCbc.$L
 
 CBC_SRCDIR = dependencies/sources/Cbc-$(CBC_TAG)
-dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L $(CBC_SRCDIR) | dependencies/install/lib
+dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L $(CBC_SRCDIR) $(PATCHELF) | dependencies/install/lib
 	cd $(CBC_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -246,6 +265,16 @@ dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L $(CBC_SRC
     ADD_CXXFLAGS="-w $(MAC_VERSION)"
 	$(SET_COMPILER) make -C $(CBC_SRCDIR)
 	$(SET_COMPILER) make install -C $(CBC_SRCDIR)
+ifeq ($(PLATFORM),LINUX)
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libCbc.$L
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libCbcSolver.$L
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libOsiCbc.$L
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN/../lib' dependencies/install/bin/cbc
+endif
+ifeq ($(PLATFORM),MACOSX)
+	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libCbc.$L
+	install_name_tools -add_rpath @loader_path dependencies/install/lib/libCbc.$L
+endif
 
 dependencies/sources/Cbc-$(CBC_TAG): | dependencies/sources
 	git clone --quiet -b releases/$(CBC_TAG) https://github.com/coin-or/Cbc.git dependencies/sources/Cbc-$(CBC_TAG)
@@ -269,7 +298,7 @@ DYNAMIC_CBC_LNK = -L$(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN) -lCbcSolver -lCbc -lOsiC
 build_cgl: dependencies/install/lib/libCgl.$L
 
 CGL_SRCDIR = dependencies/sources/Cgl-$(CGL_TAG)
-dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L $(CGL_SRCDIR) | dependencies/install/lib
+dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L $(CGL_SRCDIR) $(PATCHELF) | dependencies/install/lib
 	cd $(CGL_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -282,6 +311,13 @@ dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L $(CGL_SRC
     ADD_CXXFLAGS="-w $(MAC_VERSION)"
 	$(SET_COMPILER) make -C $(CGL_SRCDIR)
 	$(SET_COMPILER) make install -C $(CGL_SRCDIR)
+ifeq ($(PLATFORM),LINUX)
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libCgl.$L
+endif
+ifeq ($(PLATFORM),MACOSX)
+	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libCgl.$L
+	install_name_tools -add_rpath @loader_path dependencies/install/lib/libCgl.$L
+endif
 
 dependencies/sources/Cgl-$(CGL_TAG): | dependencies/sources
 	git clone --quiet -b releases/$(CGL_TAG) https://github.com/coin-or/Cgl.git $(CGL_SRCDIR)
@@ -303,7 +339,7 @@ DYNAMIC_CGL_LNK = -L$(UNIX_CGL_DIR)/lib$(UNIX_CGL_COIN) -lCgl
 build_clp: dependencies/install/lib/libClp.$L
 
 CLP_SRCDIR = dependencies/sources/Clp-$(CLP_TAG)
-dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L $(CLP_SRCDIR) | dependencies/install/lib
+dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L $(CLP_SRCDIR) $(PATCHELF) | dependencies/install/lib
 	cd $(CLP_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -316,6 +352,16 @@ dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L $(CLP_SRC
     ADD_CXXFLAGS="-w $(MAC_VERSION)"
 	$(SET_COMPILER) make -C $(CLP_SRCDIR)
 	$(SET_COMPILER) make install -C $(CLP_SRCDIR)
+ifeq ($(PLATFORM),LINUX)
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libClp.$L
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libClpSolver.$L
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libOsiClp.$L
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN/../lib' dependencies/install/bin/clp
+endif
+ifeq ($(PLATFORM),MACOSX)
+	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libClp.$L
+	install_name_tools -add_rpath @loader_path dependencies/install/lib/libClp.$L
+endif
 
 $(CLP_SRCDIR): | dependencies/sources
 	git clone --quiet -b releases/$(CLP_TAG) https://github.com/coin-or/Clp.git $(CLP_SRCDIR)
@@ -339,7 +385,7 @@ DYNAMIC_CLP_LNK = -L$(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN) -lClpSolver -lClp -lOsiC
 build_osi: dependencies/install/lib/libOsi.$L
 
 OSI_SRCDIR = dependencies/sources/Osi-$(OSI_TAG)
-dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L $(OSI_SRCDIR) | dependencies/install/lib
+dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L $(OSI_SRCDIR) $(PATCHELF) | dependencies/install/lib
 	cd $(OSI_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -353,6 +399,14 @@ dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L $(O
     ADD_CXXFLAGS="-w $(MAC_VERSION)"
 	$(SET_COMPILER) make -C $(OSI_SRCDIR)
 	$(SET_COMPILER) make install -C $(OSI_SRCDIR)
+ifeq ($(PLATFORM),LINUX)
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libOsi.$L
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libOsiCommonTests.$L
+endif
+ifeq ($(PLATFORM),MACOSX)
+	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libOsi.$L
+	install_name_tools -add_rpath @loader_path dependencies/install/lib/libOsi.$L
+endif
 
 $(OSI_SRCDIR): | dependencies/sources
 	git clone --quiet -b releases/$(OSI_TAG) https://github.com/coin-or/Osi.git $(OSI_SRCDIR)
@@ -374,7 +428,7 @@ DYNAMIC_OSI_LNK = -L$(UNIX_OSI_DIR)/lib$(UNIX_OSI_COIN) -lOsi
 build_coinutils: dependencies/install/lib/libCoinUtils.$L
 
 COINUTILS_SRCDIR = dependencies/sources/CoinUtils-$(COINUTILS_TAG)
-dependencies/install/lib/libCoinUtils.$L: $(COINUTILS_SRCDIR) | dependencies/install/lib
+dependencies/install/lib/libCoinUtils.$L: $(COINUTILS_SRCDIR) $(PATCHELF) | dependencies/install/lib
 	cd $(COINUTILS_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -387,6 +441,13 @@ dependencies/install/lib/libCoinUtils.$L: $(COINUTILS_SRCDIR) | dependencies/ins
     ADD_CXXFLAGS="-w $(MAC_VERSION)"
 	$(SET_COMPILER) make -j4 -C $(COINUTILS_SRCDIR)
 	$(SET_COMPILER) make install -C $(COINUTILS_SRCDIR)
+ifeq ($(PLATFORM),LINUX)
+	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libCoinUtils.$L
+endif
+ifeq ($(PLATFORM),MACOSX)
+	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libCoinUtils.$L
+	install_name_tools -add_rpath @loader_path dependencies/install/lib/libCoinUtils.$L
+endif
 
 $(COINUTILS_SRCDIR): | dependencies/sources
 	git clone --quiet -b releases/$(COINUTILS_TAG) https://github.com/coin-or/CoinUtils.git $(COINUTILS_SRCDIR)
@@ -445,29 +506,6 @@ endif
 # Swig is only needed when building .Net, Java or Python wrapper
 SWIG_BINARY = $(shell $(WHICH) $(UNIX_SWIG_BINARY))
 #$(error "Can't find $(UNIX_SWIG_BINARY). Please verify UNIX_SWIG_BINARY")
-
-##################################
-##  USE DYNAMIC DEPENDENCIES ?  ##
-##################################
-
-############################################
-##  Install Patchelf on linux platforms.  ##
-############################################
-# Detect if patchelf is needed
-ifeq ($(PLATFORM), LINUX)
- PATCHELF = dependencies/install/bin/patchelf
-endif
-
-PATCHELF_SRCDIR = dependencies/sources/patchelf-$(PATCHELF_TAG)
-dependencies/install/bin/patchelf: $(PATCHELF_SRCDIR) | dependencies/install/bin
-	cd $(PATCHELF_SRCDIR) && ./configure \
-    --prefix=$(OR_ROOT_FULL)/dependencies/install
-	make -C $(PATCHELF_SRCDIR)
-	make install -C $(PATCHELF_SRCDIR)
-
-$(PATCHELF_SRCDIR): | dependencies/sources
-	git clone --quiet -b $(PATCHELF_TAG) https://github.com/NixOS/patchelf.git $(PATCHELF_SRCDIR)
-	cd $(PATCHELF_SRCDIR) && ./bootstrap.sh
 
 .PHONY: clean_third_party # Clean everything. Remember to also delete archived dependencies, i.e. in the event of download failure, etc.
 clean_third_party:
