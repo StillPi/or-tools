@@ -19,7 +19,7 @@ else
 endif
 
 # Main target
-.PHONY: cc # Build C++ OR-Tools.
+.PHONY: cc # Build C++ OR-Tools and C++ Examples.
 cc: ortoolslibs ccexe
 .PHONY: test_cc # Test C++ OR-Tools using various examples.
 test_cc: test_cc_examples
@@ -831,69 +831,72 @@ rcc: $(BIN_DIR)/$(basename $(notdir $(EX)))$E
 ###############
 ##  INSTALL  ##
 ###############
+# ref: https://www.gnu.org/prep/standards/html_node/Directory-Variables.html#index-prefix
+# ref: https://www.gnu.org/prep/standards/html_node/DESTDIR.html
 install_dirs:
-	-$(MKDIR) "$(prefix)"
-	-$(MKDIR) "$(prefix)$Slib"
-	-$(MKDIR) "$(prefix)$Sinclude"
-	-$(DELREC) "$(prefix)$Sinclude$Sortools"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Salgorithms"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Sbase"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Sbop"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Sconstraint_solver"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Sglop"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Sgraph"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Slinear_solver"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Slp_data"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Ssat"
-	$(MKDIR) "$(prefix)$Sinclude$Sortools$Sutil"
+	-$(MKDIR) "$(DESTDIR)$(prefix)"
+	-$(MKDIR) "$(DESTDIR)$(prefix)$Slib"
+	-$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude"
+	-$(DELREC) "$(DESTDIR)$(prefix)$Sinclude$Sortools"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Salgorithms"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbase"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbop"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sconstraint_solver"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sglop"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sgraph"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slinear_solver"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slp_data"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Ssat"
+	$(MKDIR) "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sutil"
 
-.PHONY: install_cc # Install C++ OR-Tools to $(prefix)/.
+.PHONY: install_cc # Install C++ OR-Tools to $(DESTDIR)$(prefix)
 install_cc: install_libortools install_third_party
 
 install_libortools: ortoolslibs install_dirs
-	$(COPY) $(LIB_DIR)$S$(LIB_PREFIX)ortools.$L "$(prefix)$Slib"
-	$(COPY) ortools$Salgorithms$S*.h "$(prefix)$Sinclude$Sortools$Salgorithms"
-	$(COPY) ortools$Sbase$S*.h "$(prefix)$Sinclude$Sortools$Sbase"
-	$(COPY) ortools$Sconstraint_solver$S*.h "$(prefix)$Sinclude$Sortools$Sconstraint_solver"
-	$(COPY) ortools$Sgen$Sortools$Sconstraint_solver$S*.pb.h "$(prefix)$Sinclude$Sortools$Sconstraint_solver"
-	$(COPY) ortools$Sbop$S*.h "$(prefix)$Sinclude$Sortools$Sbop"
-	$(COPY) ortools$Sgen$Sortools$Sbop$S*.pb.h "$(prefix)$Sinclude$Sortools$Sbop"
-	$(COPY) ortools$Sglop$S*.h "$(prefix)$Sinclude$Sortools$Sglop"
-	$(COPY) ortools$Sgen$Sortools$Sglop$S*.pb.h "$(prefix)$Sinclude$Sortools$Sglop"
-	$(COPY) ortools$Sgraph$S*.h "$(prefix)$Sinclude$Sortools$Sgraph"
-	$(COPY) ortools$Sgen$Sortools$Sgraph$S*.h "$(prefix)$Sinclude$Sortools$Sgraph"
-	$(COPY) ortools$Slinear_solver$S*.h "$(prefix)$Sinclude$Sortools$Slinear_solver"
-	$(COPY) ortools$Slp_data$S*.h "$(prefix)$Sinclude$Sortools$Slp_data"
-	$(COPY) ortools$Sgen$Sortools$Slinear_solver$S*.pb.h "$(prefix)$Sinclude$Sortools$Slinear_solver"
-	$(COPY) ortools$Ssat$S*.h "$(prefix)$Sinclude$Sortools$Ssat"
-	$(COPY) ortools$Sgen$Sortools$Ssat$S*.pb.h "$(prefix)$Sinclude$Sortools$Ssat"
-	$(COPY) ortools$Sutil$S*.h "$(prefix)$Sinclude$Sortools$Sutil"
+	$(COPY) LICENSE-2.0.txt "$(DESTDIR)$(prefix)"
+	$(COPY) ortools$Salgorithms$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Salgorithms"
+	$(COPY) ortools$Sbase$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbase"
+	$(COPY) ortools$Sconstraint_solver$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sconstraint_solver"
+	$(COPY) ortools$Sgen$Sortools$Sconstraint_solver$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sconstraint_solver"
+	$(COPY) ortools$Sbop$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbop"
+	$(COPY) ortools$Sgen$Sortools$Sbop$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbop"
+	$(COPY) ortools$Sglop$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sglop"
+	$(COPY) ortools$Sgen$Sortools$Sglop$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sglop"
+	$(COPY) ortools$Sgraph$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sgraph"
+	$(COPY) ortools$Sgen$Sortools$Sgraph$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sgraph"
+	$(COPY) ortools$Slinear_solver$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slinear_solver"
+	$(COPY) ortools$Slp_data$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slp_data"
+	$(COPY) ortools$Sgen$Sortools$Slinear_solver$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slinear_solver"
+	$(COPY) ortools$Ssat$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Ssat"
+	$(COPY) ortools$Sgen$Sortools$Ssat$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Ssat"
+	$(COPY) ortools$Sutil$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sutil"
+	$(COPY) $(LIB_DIR)$S$(LIB_PREFIX)ortools.$L "$(DESTDIR)$(prefix)$Slib"
 
 install_third_party:
 ifeq ($(UNIX_GFLAGS_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-	$(COPYREC) dependencies$Sinstall$Sinclude$Sgflags "$(prefix)$Sinclude"
-	$(COPYREC) dependencies$Sinstall$Sbin$Sgflags_completions.sh "$(prefix)$Sbin"
-	$(COPYREC) dependencies$Sinstall$Slib$Slibgflags* "$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Sinclude$Sgflags "$(DESTDIR)$(prefix)$Sinclude"
+	$(COPYREC) dependencies$Sinstall$Slib$Slibgflags* "$(DESTDIR)$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Sbin$Sgflags_completions.sh "$(DESTDIR)$(prefix)$Sbin"
 endif
 ifeq ($(UNIX_GLOG_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-	$(COPYREC) dependencies$Sinstall$Sinclude$Sglog "$(prefix)$Sinclude"
-	$(COPYREC) dependencies$Sinstall$Slib$Slibglog* "$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Sinclude$Sglog "$(DESTDIR)$(prefix)$Sinclude"
+	$(COPYREC) dependencies$Sinstall$Slib$Slibglog* "$(DESTDIR)$(prefix)$Slib"
 endif
 ifeq ($(UNIX_PROTOBUF_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-	$(COPYREC) dependencies$Sinstall$Sinclude$Sgoogle "$(prefix)$Sinclude"
-	$(COPYREC) dependencies$Sinstall$Sbin$Sprotoc "$(prefix)$Sbin"
-	$(COPYREC) dependencies$Sinstall$Slib$Slibproto* "$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Sinclude$Sgoogle "$(DESTDIR)$(prefix)$Sinclude"
+	$(COPYREC) dependencies$Sinstall$Slib$Slibproto* "$(DESTDIR)$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Sbin$Sprotoc "$(DESTDIR)$(prefix)$Sbin"
 endif
 ifeq ($(UNIX_CBC_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-	$(COPYREC) dependencies$Sinstall$Sinclude$Scoin "$(prefix)$Sinclude"
-	$(COPYREC) dependencies$Sinstall$Sbin$Scbc "$(prefix)$Sbin"
-	$(COPYREC) dependencies$Sinstall$Sbin$Sclp "$(prefix)$Sbin"
-	$(COPYREC) dependencies$Sinstall$Slib$SlibCbc* "$(prefix)$Slib"
-	$(COPYREC) dependencies$Sinstall$Slib$SlibCgl* "$(prefix)$Slib"
-	$(COPYREC) dependencies$Sinstall$Slib$SlibClp* "$(prefix)$Slib"
-	$(COPYREC) dependencies$Sinstall$Slib$SlibOsi* "$(prefix)$Slib"
-	$(COPYREC) dependencies$Sinstall$Slib$SlibCoinUtils* "$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Sinclude$Scoin "$(DESTDIR)$(prefix)$Sinclude"
+	$(COPYREC) dependencies$Sinstall$Slib$SlibCbc* "$(DESTDIR)$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Slib$SlibCgl* "$(DESTDIR)$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Slib$SlibClp* "$(DESTDIR)$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Slib$SlibOsi* "$(DESTDIR)$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Slib$SlibCoinUtils* "$(DESTDIR)$(prefix)$Slib"
+	$(COPYREC) dependencies$Sinstall$Sbin$Scbc "$(DESTDIR)$(prefix)$Sbin"
+	$(COPYREC) dependencies$Sinstall$Sbin$Sclp "$(DESTDIR)$(prefix)$Sbin"
 endif
 
 .PHONY: detect_cc # Show variables used to build C++ OR-Tools.
@@ -907,11 +910,11 @@ detect_cc:
 	@echo LINK_CMD = $(LINK_CMD)
 	@echo DEPENDENCIES_LNK = $(DEPENDENCIES_LNK)
 	@echo SRC_DIR = $(SRC_DIR)
-	@echo EX_DIR  = $(EX_DIR)
+	@echo EX_DIR = $(EX_DIR)
 	@echo OBJ_DIR = $(OBJ_DIR)
 	@echo LIB_DIR = $(LIB_DIR)
 	@echo BIN_DIR = $(BIN_DIR)
-	@echo prefix  = $(prefix)
+	@echo prefix = $(prefix)
 	@echo OR_TOOLS_LNK = $(OR_TOOLS_LNK)
 	@echo OR_TOOLS_LDFLAGS = $(OR_TOOLS_LDFLAGS)
 	@echo OR_TOOLS_LIBS = $(OR_TOOLS_LIBS)
