@@ -81,7 +81,7 @@ dependencies/archives:
 .PHONY: install_deps_directories
 install_deps_directories: \
  dependencies/install/bin \
- dependencies/install/lib \
+ dependencies/install/lib/pkgconfig \
  dependencies/install/include/coin
 
 dependencies/install:
@@ -92,6 +92,9 @@ dependencies/install/bin: | dependencies/install
 
 dependencies/install/lib: | dependencies/install
 	$(MKDIR_P) dependencies$Sinstall$Slib
+
+dependencies/install/lib/pkgconfig: | dependencies/install/lib
+	$(MKDIR_P) dependencies$Sinstall$Slib$Spkgconfig
 
 dependencies/install/include: | dependencies/install
 	$(MKDIR_P) dependencies$Sinstall$Sinclude
@@ -251,7 +254,7 @@ $(PATCHELF_SRCDIR): | dependencies/sources
 build_cbc: dependencies/install/lib/libCbc.$L
 
 CBC_SRCDIR = dependencies/sources/Cbc-$(CBC_TAG)
-dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L $(CBC_SRCDIR) $(PATCHELF) | dependencies/install/lib
+dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L $(CBC_SRCDIR) $(PATCHELF)
 	cd $(CBC_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -272,8 +275,29 @@ ifeq ($(PLATFORM),LINUX)
 	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN/../lib' dependencies/install/bin/cbc
 endif
 ifeq ($(PLATFORM),MACOSX)
-	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libCbc.$L
-	install_name_tools -add_rpath @loader_path dependencies/install/lib/libCbc.$L
+# libCbc.dylib
+	install_name_tool -id @rpath/libCbc.3.$L dependencies/install/lib/libCbc.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libCbc.$L
+# libCbcSolver.dylib
+	install_name_tool -id @rpath/libCbcSolver.3.$L dependencies/install/lib/libCbcSolver.$L
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libCbc.3.$L @rpath/libCbc.3.$L \
+ dependencies/install/lib/libCbcSolver.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libCbcSolver.$L
+# libOsiCbc.dylib
+	install_name_tool -id @rpath/libOsiCbc.3.$L dependencies/install/lib/libOsiCbc.$L
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libCbc.3.$L @rpath/libCbc.3.$L \
+ dependencies/install/lib/libOsiCbc.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libOsiCbc.$L
+# bin/cbc
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libCbc.3.$L @rpath/libCbc.3.$L \
+ dependencies/install/bin/cbc
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libCbcSolver.3.$L @rpath/libCbcSolver.3.$L \
+ dependencies/install/bin/cbc
+	install_name_tool -add_rpath @loader_path/../lib dependencies/install/bin/cbc
 endif
 
 dependencies/sources/Cbc-$(CBC_TAG): | dependencies/sources
@@ -298,7 +322,7 @@ DYNAMIC_CBC_LNK = -L$(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN) -lCbcSolver -lCbc -lOsiC
 build_cgl: dependencies/install/lib/libCgl.$L
 
 CGL_SRCDIR = dependencies/sources/Cgl-$(CGL_TAG)
-dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L $(CGL_SRCDIR) $(PATCHELF) | dependencies/install/lib
+dependencies/install/lib/libCgl.$L: dependencies/install/lib/libClp.$L $(CGL_SRCDIR) $(PATCHELF)
 	cd $(CGL_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -315,8 +339,8 @@ ifeq ($(PLATFORM),LINUX)
 	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libCgl.$L
 endif
 ifeq ($(PLATFORM),MACOSX)
-	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libCgl.$L
-	install_name_tools -add_rpath @loader_path dependencies/install/lib/libCgl.$L
+	install_name_tool -id @rpath/libCgl.1.$L dependencies/install/lib/libCgl.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libCgl.$L
 endif
 
 dependencies/sources/Cgl-$(CGL_TAG): | dependencies/sources
@@ -339,7 +363,7 @@ DYNAMIC_CGL_LNK = -L$(UNIX_CGL_DIR)/lib$(UNIX_CGL_COIN) -lCgl
 build_clp: dependencies/install/lib/libClp.$L
 
 CLP_SRCDIR = dependencies/sources/Clp-$(CLP_TAG)
-dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L $(CLP_SRCDIR) $(PATCHELF) | dependencies/install/lib
+dependencies/install/lib/libClp.$L: dependencies/install/lib/libOsi.$L $(CLP_SRCDIR) $(PATCHELF)
 	cd $(CLP_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -359,8 +383,29 @@ ifeq ($(PLATFORM),LINUX)
 	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN/../lib' dependencies/install/bin/clp
 endif
 ifeq ($(PLATFORM),MACOSX)
-	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libClp.$L
-	install_name_tools -add_rpath @loader_path dependencies/install/lib/libClp.$L
+# libClp.dylib
+	install_name_tool -id @rpath/libClp.1.$L dependencies/install/lib/libClp.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libClp.$L
+# libClpSolver.dylib
+	install_name_tool -id @rpath/libClpSolver.1.$L dependencies/install/lib/libClpSolver.$L
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libClp.1.$L @rpath/libClp.1.$L \
+ dependencies/install/lib/libClpSolver.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libClpSolver.$L
+# libOsiClp.dylib
+	install_name_tool -id @rpath/libOsiClp.1.$L dependencies/install/lib/libOsiClp.$L
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libClp.1.$L @rpath/libClp.1.$L \
+ dependencies/install/lib/libOsiClp.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libOsiClp.$L
+# bin/clp
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libClp.1.$L @rpath/libClp.1.$L \
+ dependencies/install/bin/clp
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libClpSolver.1.$L @rpath/libClpSolver.1.$L \
+ dependencies/install/bin/clp
+	install_name_tool -add_rpath @loader_path/../lib dependencies/install/bin/clp
 endif
 
 $(CLP_SRCDIR): | dependencies/sources
@@ -385,7 +430,7 @@ DYNAMIC_CLP_LNK = -L$(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN) -lClpSolver -lClp -lOsiC
 build_osi: dependencies/install/lib/libOsi.$L
 
 OSI_SRCDIR = dependencies/sources/Osi-$(OSI_TAG)
-dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L $(OSI_SRCDIR) $(PATCHELF) | dependencies/install/lib
+dependencies/install/lib/libOsi.$L: dependencies/install/lib/libCoinUtils.$L $(OSI_SRCDIR) $(PATCHELF)
 	cd $(OSI_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -404,8 +449,15 @@ ifeq ($(PLATFORM),LINUX)
 	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libOsiCommonTests.$L
 endif
 ifeq ($(PLATFORM),MACOSX)
-	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libOsi.$L
-	install_name_tools -add_rpath @loader_path dependencies/install/lib/libOsi.$L
+# libOsi.dylib
+	install_name_tool -id @rpath/libOsi.1.$L dependencies/install/lib/libOsi.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libOsi.$L
+# libOsiCommonTests.dylib
+	install_name_tool -id @rpath/libOsiCommonTests.1.$L dependencies/install/lib/libOsiCommonTests.$L
+	install_name_tool -change \
+ $(OR_ROOT_FULL)/dependencies/install/lib/libOsi.1.$L @rpath/libOsi.1.$L \
+ dependencies/install/lib/libOsiCommonTests.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libOsiCommonTests.$L
 endif
 
 $(OSI_SRCDIR): | dependencies/sources
@@ -428,7 +480,8 @@ DYNAMIC_OSI_LNK = -L$(UNIX_OSI_DIR)/lib$(UNIX_OSI_COIN) -lOsi
 build_coinutils: dependencies/install/lib/libCoinUtils.$L
 
 COINUTILS_SRCDIR = dependencies/sources/CoinUtils-$(COINUTILS_TAG)
-dependencies/install/lib/libCoinUtils.$L: $(COINUTILS_SRCDIR) $(PATCHELF) | dependencies/install/lib
+dependencies/install/lib/libCoinUtils.$L: $(COINUTILS_SRCDIR) $(PATCHELF) | \
+ dependencies/install/lib/pkgconfig dependencies/install/include/coin
 	cd $(COINUTILS_SRCDIR) && $(SET_COMPILER) ./configure \
     --prefix=$(OR_ROOT_FULL)/dependencies/install \
     --disable-debug \
@@ -439,14 +492,14 @@ dependencies/install/lib/libCoinUtils.$L: $(COINUTILS_SRCDIR) $(PATCHELF) | depe
     --disable-dependency-tracking \
     --enable-dependency-linking \
     ADD_CXXFLAGS="-w $(MAC_VERSION)"
-	$(SET_COMPILER) make -j4 -C $(COINUTILS_SRCDIR)
+	$(SET_COMPILER) make -C $(COINUTILS_SRCDIR)
 	$(SET_COMPILER) make install -C $(COINUTILS_SRCDIR)
 ifeq ($(PLATFORM),LINUX)
 	$(DEP_BIN_DIR)/patchelf --set-rpath '$$ORIGIN' dependencies/install/lib/libCoinUtils.$L
 endif
 ifeq ($(PLATFORM),MACOSX)
-	install_name_tools -id @rpath/libCoinUtils.$L dependencies/install/lib/libCoinUtils.$L
-	install_name_tools -add_rpath @loader_path dependencies/install/lib/libCoinUtils.$L
+	install_name_tool -id @rpath/libCoinUtils.3.$L dependencies/install/lib/libCoinUtils.$L
+	install_name_tool -add_rpath @loader_path dependencies/install/lib/libCoinUtils.$L
 endif
 
 $(COINUTILS_SRCDIR): | dependencies/sources
