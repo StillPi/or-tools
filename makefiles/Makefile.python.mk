@@ -54,7 +54,7 @@ python: \
 test_python: test_python_examples
 
 install_python: pypi_archive
-	@cd "$(PYPI_ARCHIVE_TEMP_DIR)$Sortools" &&  "$(PYTHON_EXECUTABLE)" setup.py install --user
+	@cd "$(PYPI_ARCHIVE_TEMP_DIR)$Sortools" && "$(PYTHON_EXECUTABLE)" setup.py install --user
 
 BUILT_LANGUAGES +=, Python$(PYTHON_VERSION)
 else
@@ -134,18 +134,18 @@ dependencies/sources/protobuf-$(PROTOBUF_TAG)/python/setup.py
 ifeq ($(SYSTEM),win)
 	copy dependencies$Sinstall$Sbin$Sprotoc.exe dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Ssrc
 	cd dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Spython && "$(PYTHON_EXECUTABLE)" setup.py build
-else
+endif
 ifeq ($(PLATFORM),LINUX)
 	cd dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Spython && \
  LD_LIBRARY_PATH="$(UNIX_PROTOBUF_DIR)/lib":$(LD_LIBRARY_PATH) \
  PROTOC=$(PROTOC_BINARY) \
  "$(PYTHON_EXECUTABLE)" setup.py build
-else # MacOS
+endif
+ifeq ($(PLATFORM),MACOSX)
 	cd dependencies$Ssources$Sprotobuf-$(PROTOBUF_TAG)$Spython && \
  DYLD_LIBRARY_PATH="$(UNIX_PROTOBUF_DIR)/lib":$(DYLD_LIBRARY_PATH) \
  PROTOC=$(PROTOC_BINARY) \
  "$(PYTHON_EXECUTABLE)" setup.py build
-endif
 endif
 
 .PHONY: pyinit
