@@ -849,9 +849,9 @@ install_dirs:
 	$(MKDIR) "$(prefix)$Sinclude$Sortools$Sutil"
 
 .PHONY: install_cc # Install C++ OR-Tools to $(prefix)/.
-install_cc: install_ortools install_third_party
+install_cc: install_libortools install_third_party
 
-install_ortools: ortoolslibs install_dirs
+install_libortools: ortoolslibs install_dirs
 	$(COPY) $(LIB_DIR)$S$(LIB_PREFIX)ortools.$L "$(prefix)$Slib"
 	$(COPY) ortools$Salgorithms$S*.h "$(prefix)$Sinclude$Sortools$Salgorithms"
 	$(COPY) ortools$Sbase$S*.h "$(prefix)$Sinclude$Sortools$Sbase"
@@ -871,21 +871,21 @@ install_ortools: ortoolslibs install_dirs
 	$(COPY) ortools$Sutil$S*.h "$(prefix)$Sinclude$Sortools$Sutil"
 
 install_third_party:
-ifeq ($(UNIX_GFLAGS_DIR), $(OR_TOOLS_TOP)/dependencies/install)
+ifeq ($(UNIX_GFLAGS_DIR),$(OR_TOOLS_TOP)/dependencies/install)
 	$(COPYREC) dependencies$Sinstall$Sinclude$Sgflags "$(prefix)$Sinclude"
 	$(COPYREC) dependencies$Sinstall$Sbin$Sgflags_completions.sh "$(prefix)$Sbin"
 	$(COPYREC) dependencies$Sinstall$Slib$Slibgflags* "$(prefix)$Slib"
 endif
-ifeq ($(UNIX_GLOG_DIR), $(OR_TOOLS_TOP)/dependencies/install)
+ifeq ($(UNIX_GLOG_DIR),$(OR_TOOLS_TOP)/dependencies/install)
 	$(COPYREC) dependencies$Sinstall$Sinclude$Sglog "$(prefix)$Sinclude"
 	$(COPYREC) dependencies$Sinstall$Slib$Slibglog* "$(prefix)$Slib"
 endif
-ifeq ($(UNIX_PROTOBUF_DIR), $(OR_TOOLS_TOP)/dependencies/install)
+ifeq ($(UNIX_PROTOBUF_DIR),$(OR_TOOLS_TOP)/dependencies/install)
 	$(COPYREC) dependencies$Sinstall$Sinclude$Sgoogle "$(prefix)$Sinclude"
 	$(COPYREC) dependencies$Sinstall$Sbin$Sprotoc "$(prefix)$Sbin"
 	$(COPYREC) dependencies$Sinstall$Slib$Slibproto* "$(prefix)$Slib"
 endif
-ifeq ($(UNIX_CBC_DIR), $(OR_TOOLS_TOP)/dependencies/install)
+ifeq ($(UNIX_CBC_DIR),$(OR_TOOLS_TOP)/dependencies/install)
 	$(COPYREC) dependencies$Sinstall$Sinclude$Scoin "$(prefix)$Sinclude"
 	$(COPYREC) dependencies$Sinstall$Sbin$Scbc "$(prefix)$Sbin"
 	$(COPYREC) dependencies$Sinstall$Sbin$Sclp "$(prefix)$Sbin"
