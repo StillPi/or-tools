@@ -25,7 +25,7 @@ INC_DIR = $(OR_ROOT).
 
 O=obj
 E=.exe
-L=.lib
+L=lib
 DLL=.dll
 PDB=.pdb
 EXP=.exp
