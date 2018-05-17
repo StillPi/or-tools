@@ -394,29 +394,40 @@ else
 endif
 
 # pywraprcpsp
-
-pyrcpsp: $(LIB_DIR)/_pywraprcpsp.$(SWIG_LIB_SUFFIX) $(GEN_DIR)/ortools/data/pywraprcpsp.py
+PYRCPSP_LIBS = $(LIB_DIR)/_pywraprcpsp.$(SWIG_LIB_SUFFIX)
+ifeq ($(PLATFORM),MACOSX)
+PYRCPSP_LDFLAGS = -install_name @rpath/_pywraprcpsp.$(SWIG_LIB_SUFFIX) #
+endif
+pyrcpsp: $(PYRCPSP_LIBS)
 
 $(GEN_DIR)/ortools/data/rcpsp_pb2.py: $(SRC_DIR)/ortools/data/rcpsp.proto
 	$(PROTOC) --proto_path=$(INC_DIR) --python_out=$(GEN_DIR) $(SRC_DIR)/ortools/data/rcpsp.proto
 
 $(GEN_DIR)/ortools/data/pywraprcpsp.py: \
-		$(SRC_DIR)/ortools/data/rcpsp_parser.h \
-		$(SRC_DIR)/ortools/base/base.i \
-		$(SRC_DIR)/ortools/data/python/rcpsp.i \
-		$(GEN_DIR)/ortools/data/rcpsp_pb2.py \
-		$(DATA_DEPS)
-	$(SWIG_BINARY) $(SWIG_INC) -I$(INC_DIR) -c++ -python $(SWIG_PYTHON3_FLAG) -o $(GEN_DIR)$Sortools$Sdata$Srcpsp_python_wrap.cc -module pywraprcpsp $(SRC_DIR)/ortools/data$Spython$Srcpsp.i
+ $(SRC_DIR)/ortools/data/rcpsp_parser.h \
+ $(SRC_DIR)/ortools/base/base.i \
+ $(SRC_DIR)/ortools/data/python/rcpsp.i \
+ $(GEN_DIR)/ortools/data/rcpsp_pb2.py \
+ $(DATA_DEPS)
+	$(SWIG_BINARY) $(SWIG_INC) -I$(INC_DIR) -c++ -python $(SWIG_PYTHON3_FLAG) \
+ -o $(GEN_DIR)$Sortools$Sdata$Srcpsp_python_wrap.cc \
+ -module pywraprcpsp \
+ $(SRC_DIR)/ortools/data$Spython$Srcpsp.i
 
 $(GEN_DIR)/ortools/data/rcpsp_python_wrap.cc: $(GEN_DIR)/ortools/data/pywraprcpsp.py
 
 $(OBJ_DIR)/swig/rcpsp_python_wrap.$O: $(GEN_DIR)/ortools/data/rcpsp_python_wrap.cc $(DATA_DEPS)
 	$(CCC) $(CFLAGS) $(PYTHON_INC) $(PYTHON3_CFLAGS) -c $(GEN_DIR)$Sortools$Sdata$Srcpsp_python_wrap.cc $(OBJ_OUT)$(OBJ_DIR)$Sswig$Srcpsp_python_wrap.$O
 
-$(LIB_DIR)/_pywraprcpsp.$(SWIG_LIB_SUFFIX): \
-		$(OBJ_DIR)/swig/rcpsp_python_wrap.$O \
-			$(OR_TOOLS_LIBS)
-	$(DYNAMIC_LD) $(LD_OUT)$(LIB_DIR)$S_pywraprcpsp.$(SWIG_LIB_SUFFIX) $(OBJ_DIR)$Sswig$Srcpsp_python_wrap.$O $(OR_TOOLS_LNK) $(SYS_LNK) $(PYTHON_LNK)
+$(PYRCPSP_LIBS): $(OBJ_DIR)/swig/rcpsp_python_wrap.$O $(OR_TOOLS_LIBS)
+	$(DYNAMIC_LD) \
+ $(PYRCPSP_LDFLAGS) \
+ $(LD_OUT)$(LIB_DIR)$S_pywraprcpsp.$(SWIG_LIB_SUFFIX) \
+ $(OBJ_DIR)$Sswig$Srcpsp_python_wrap.$O \
+ $(OR_TOOLS_LNK) \
+ $(SYS_LNK) \
+ $(PYTHON_LNK) \
+ $(PYTHON_LDFLAGS)
 ifeq ($(SYSTEM),win)
 	copy $(LIB_DIR)\\_pywraprcpsp.dll $(GEN_DIR)\\ortools\\data\\_pywraprcpsp.pyd
 else
