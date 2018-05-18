@@ -112,52 +112,52 @@ objs/util:
 	$(MKDIR_P) objs$Sutil
 
 ortools/gen/com/google/ortools/algorithms:
-	$(MKDIR_P) ortools$Sgen$Scom$Sgoogle$Sortools$Salgorithms
+	$(MKDIR_P) $(GEN_DIR)$Scom$Sgoogle$Sortools$Salgorithms
 
 ortools/gen/com/google/ortools/constraintsolver:
-	$(MKDIR_P) ortools$Sgen$Scom$Sgoogle$Sortools$Sconstraintsolver
+	$(MKDIR_P) $(GEN_DIR)$Scom$Sgoogle$Sortools$Sconstraintsolver
 
 ortools/gen/com/google/ortools/graph:
-	$(MKDIR_P) ortools$Sgen$Scom$Sgoogle$Sortools$Sgraph
+	$(MKDIR_P) $(GEN_DIR)$Scom$Sgoogle$Sortools$Sgraph
 
 ortools/gen/com/google/ortools/linearsolver:
-	$(MKDIR_P) ortools$Sgen$Scom$Sgoogle$Sortools$Slinearsolver
+	$(MKDIR_P) $(GEN_DIR)$Scom$Sgoogle$Sortools$Slinearsolver
 
 ortools/gen/com/google/ortools/flatzinc:
-	$(MKDIR_P) ortools$Sgen$Scom$Sgoogle$Sortools$Sflatzinc
+	$(MKDIR_P) $(GEN_DIR)$Scom$Sgoogle$Sortools$Sflatzinc
 
 ortools/gen/com/google/ortools/sat:
-	$(MKDIR_P) ortools$Sgen$Scom$Sgoogle$Sortools$Ssat
+	$(MKDIR_P) $(GEN_DIR)$Scom$Sgoogle$Sortools$Ssat
 
 ortools/gen/com/google/ortools/properties:
-	$(MKDIR_P) ortools$Sgen$Scom$Sgoogle$Sortools$Sproperties
+	$(MKDIR_P) $(GEN_DIR)$Scom$Sgoogle$Sortools$Sproperties
 
 ortools/gen/ortools/algorithms:
-	$(MKDIR_P) ortools$Sgen$Sortools$Salgorithms
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Salgorithms
 
 ortools/gen/ortools/bop:
-	$(MKDIR_P) ortools$Sgen$Sortools$Sbop
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Sbop
 
 ortools/gen/ortools/constraint_solver:
-	$(MKDIR_P) ortools$Sgen$Sortools$Sconstraint_solver
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Sconstraint_solver
 
 ortools/gen/ortools/data:
-	$(MKDIR_P) ortools$Sgen$Sortools$Sdata
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Sdata
 
 ortools/gen/ortools/flatzinc:
-	$(MKDIR_P) ortools$Sgen$Sortools$Sflatzinc
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Sflatzinc
 
 ortools/gen/ortools/glop:
-	$(MKDIR_P) ortools$Sgen$Sortools$Sglop
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Sglop
 
 ortools/gen/ortools/graph:
-	$(MKDIR_P) ortools$Sgen$Sortools$Sgraph
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Sgraph
 
 ortools/gen/ortools/linear_solver:
-	$(MKDIR_P) ortools$Sgen$Sortools$Slinear_solver
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Slinear_solver
 
 ortools/gen/ortools/sat:
-	$(MKDIR_P) ortools$Sgen$Sortools$Ssat
+	$(MKDIR_P) $(GEN_DIR)$Sortools$Ssat
 
 .PHONY: clean_cc # Clean C++ output from previous build.
 clean_cc:
@@ -200,8 +200,8 @@ clean_cc:
 	-$(DEL) $(GEN_DIR)$Sortools$Sutil$S*.pb.*
 	-$(DEL) $(BIN_DIR)$S*.exp
 	-$(DEL) $(BIN_DIR)$S*.lib
-	-$(DELREC) $(OR_ROOT)src$Sgen$Sflatzinc$S*
-	-$(DELREC) $(OR_ROOT)objs$Sflatzinc$S*
+	-$(DELREC) $(GEN_DIR)$Sflatzinc$S*
+	-$(DELREC) $(OBJ_DIR)$Sflatzinc$S*
 
 .PHONY: clean_compat
 clean_compat:
@@ -858,18 +858,18 @@ install_libortools: ortoolslibs install_dirs
 	$(COPY) ortools$Salgorithms$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Salgorithms"
 	$(COPY) ortools$Sbase$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbase"
 	$(COPY) ortools$Sconstraint_solver$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sconstraint_solver"
-	$(COPY) ortools$Sgen$Sortools$Sconstraint_solver$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sconstraint_solver"
+	$(COPY) $(GEN_DIR)$Sortools$Sconstraint_solver$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sconstraint_solver"
 	$(COPY) ortools$Sbop$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbop"
-	$(COPY) ortools$Sgen$Sortools$Sbop$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbop"
+	$(COPY) $(GEN_DIR)$Sortools$Sbop$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sbop"
 	$(COPY) ortools$Sglop$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sglop"
-	$(COPY) ortools$Sgen$Sortools$Sglop$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sglop"
+	$(COPY) $(GEN_DIR)$Sortools$Sglop$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sglop"
 	$(COPY) ortools$Sgraph$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sgraph"
-	$(COPY) ortools$Sgen$Sortools$Sgraph$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sgraph"
+	$(COPY) $(GEN_DIR)$Sortools$Sgraph$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sgraph"
 	$(COPY) ortools$Slinear_solver$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slinear_solver"
 	$(COPY) ortools$Slp_data$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slp_data"
-	$(COPY) ortools$Sgen$Sortools$Slinear_solver$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slinear_solver"
+	$(COPY) $(GEN_DIR)$Sortools$Slinear_solver$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Slinear_solver"
 	$(COPY) ortools$Ssat$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Ssat"
-	$(COPY) ortools$Sgen$Sortools$Ssat$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Ssat"
+	$(COPY) $(GEN_DIR)$Sortools$Ssat$S*.pb.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Ssat"
 	$(COPY) ortools$Sutil$S*.h "$(DESTDIR)$(prefix)$Sinclude$Sortools$Sutil"
 	$(COPY) $(LIB_DIR)$S$(LIB_PREFIX)ortools.$L "$(DESTDIR)$(prefix)$Slib"
 
