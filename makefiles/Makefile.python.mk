@@ -514,29 +514,18 @@ else
 	cd temp && tar -c -v -z --no-same-owner -f ../or-tools_python_examples$(PYPI_OS)_v$(OR_TOOLS_VERSION).tar.gz ortools_examples
 endif
 
+#####################
+##  Pypi artifact  ##
+#####################
+.PHONY: pypi_archive # Create Python "ortools" wheel package
 PYPI_ARCHIVE_TEMP_DIR = temp-python$(PYTHON_VERSION)
-
-OR_TOOLS_PYTHON_GEN_SCRIPTS = $(wildcard src/gen/ortools/*/*.py) $(wildcard src/gen/ortools/*/*.cc)
-
-# Stages all the files needed to build the python package.
-.PHONY: pypi_archive_dir
-pypi_archive_dir: python $(PYPI_ARCHIVE_TEMP_DIR)
-
-# Patches the archive files to be able to build a pypi package.
-# Graft libortools if needed and set RPATHs.
-.PHONY: pypi_archive
-pypi_archive: pypi_archive_dir $(PATCHELF)
+pypi_archive: python $(PYPI_ARCHIVE_TEMP_DIR)
 ifneq ($(SYSTEM),win)
-	cp lib/libortools.$L $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools
-ifeq ($(PLATFORM),MACOSX)
-	tools/fix_python_libraries_on_mac.sh $(PYPI_ARCHIVE_TEMP_DIR)
-endif
-ifeq ($(PLATFORM),LINUX)
-	tools/fix_python_libraries_on_linux.sh $(PYPI_ARCHIVE_TEMP_DIR)
-endif
+	cp $(OR_TOOLS_LIBS) $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools
 endif
 
-$(PYPI_ARCHIVE_TEMP_DIR) : $(OR_TOOLS_PYTHON_GEN_SCRIPTS)
+OR_TOOLS_PYTHON_GEN_SCRIPTS = $(wildcard $(GEN_DIR)/ortools/*/*.py) $(wildcard $(GEN_DIR)/ortools/*/*.cc)
+$(PYPI_ARCHIVE_TEMP_DIR): $(OR_TOOLS_PYTHON_GEN_SCRIPTS)
 	-$(DELREC) $(PYPI_ARCHIVE_TEMP_DIR)
 	$(MKDIR) $(PYPI_ARCHIVE_TEMP_DIR)
 	$(MKDIR) $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
