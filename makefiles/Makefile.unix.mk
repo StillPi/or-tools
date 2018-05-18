@@ -150,7 +150,11 @@ ifeq ($(PLATFORM),LINUX)
   #PRE_LIB = -Wl,-rpath $(OR_ROOT_FULL)/lib -L$(OR_ROOT_FULL)/lib -l
   POST_LIB =
   LINK_FLAGS = -Wl,-rpath,"\$$ORIGIN:\$$ORIGIN/../lib:\$$ORIGIN/../dependencies/install/lib"
-  PYTHON_LDFLAGS = -Wl,-rpath,"\$$ORIGIN/../../../../lib:\$$ORIGIN/../../../../dependencies/install/lib"
+  PYTHON_LDFLAGS = \
+ -Wl,-rpath,"\$$ORIGIN" \
+ -Wl,-rpath,"\$$ORIGIN/../../ortools" \
+ -Wl,-rpath,"\$$ORIGIN/../../../../lib" \
+ -Wl,-rpath,"\$$ORIGIN/../../../../dependencies/install/lib"
 endif  # ifeq ($(PLATFORM),LINUX)
 ifeq ($(PLATFORM),MACOSX)
   MAC_VERSION = -mmacosx-version-min=$(MAC_MIN_VERSION)
@@ -209,6 +213,7 @@ ifeq ($(PLATFORM),MACOSX)
   LDFLAGS = -install_name @rpath/$(LIB_PREFIX)ortools.$L #
   PYTHON_LDFLAGS = \
  -Wl,-rpath,@loader_path \
+ -Wl,-rpath,@loader_path/../../ortools \
  -Wl,-rpath,@loader_path/../../../../lib \
  -Wl,-rpath,@loader_path/../../../../dependencies/install/lib
 endif # ifeq ($(PLATFORM),MACOSX)
