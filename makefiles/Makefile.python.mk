@@ -44,9 +44,9 @@ python: \
 	ortoolslibs \
 	install_python_modules \
 	pyinit \
-	pycp \
 	pyalgorithms \
 	pygraph \
+	pycp \
 	pylp \
 	pysat \
 	pyrcpsp
