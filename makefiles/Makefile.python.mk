@@ -489,9 +489,7 @@ else
 endif
 
 # Run a single example
-
-rpy: $(LIB_DIR)/_pywraplp.$(SWIG_LIB_SUFFIX) $(LIB_DIR)/_pywrapcp.$(SWIG_LIB_SUFFIX) $(LIB_DIR)/_pywrapgraph.$(SWIG_LIB_SUFFIX) $(LIB_DIR)/_pywrapknapsack_solver.$(SWIG_LIB_SUFFIX) $(LIB_DIR)/_pywrapsat.$(SWIG_LIB_SUFFIX) $(LIB_DIR)/_pywraprcpsp.$(SWIG_LIB_SUFFIX)  $(EX)
-	@echo Running $(EX)
+rpy: $(PYLP_LIBS) $(PYCP_LIBS) $(PYGRAPH_LIBS) $(PYALGORITHMS_LIBS) $(PYSAT_LIBS) $(PYRCPSP_LIBS) $(EX)
 	$(SET_PYTHONPATH) "$(PYTHON_EXECUTABLE)" $(EX) $(ARGS)
 
 .PHONY: python_examples_archive # Build stand-alone Python examples archive file for redistribution.
