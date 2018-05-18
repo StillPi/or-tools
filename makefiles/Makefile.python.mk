@@ -54,7 +54,7 @@ python: \
 test_python: test_python_examples
 
 install_python: pypi_archive
-	@cd "$(PYPI_ARCHIVE_TEMP_DIR)$Sortools" && "$(PYTHON_EXECUTABLE)" setup.py install --user
+	cd "$(PYPI_ARCHIVE_TEMP_DIR)$Sortools" && "$(PYTHON_EXECUTABLE)" setup.py install --user
 
 BUILT_LANGUAGES +=, Python$(PYTHON_VERSION)
 else
