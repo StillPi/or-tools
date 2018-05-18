@@ -523,6 +523,22 @@ pypi_archive: python $(PYPI_ARCHIVE_TEMP_DIR)
 ifneq ($(SYSTEM),win)
 	cp $(OR_TOOLS_LIBS) $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools
 endif
+ifeq ($(UNIX_GFLAGS_DIR),$(OR_TOOLS_TOP)/dependencies/install)
+	$(COPYREC) dependencies$Sinstall$Slib$Slibgflags* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+endif
+ifeq ($(UNIX_GLOG_DIR),$(OR_TOOLS_TOP)/dependencies/install)
+	$(COPYREC) dependencies$Sinstall$Slib$Slibglog* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+endif
+ifeq ($(UNIX_PROTOBUF_DIR),$(OR_TOOLS_TOP)/dependencies/install)
+	$(COPYREC) dependencies$Sinstall$Slib$Slibproto* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+endif
+ifeq ($(UNIX_CBC_DIR),$(OR_TOOLS_TOP)/dependencies/install)
+	$(COPYREC) dependencies$Sinstall$Slib$SlibCbc* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+	$(COPYREC) dependencies$Sinstall$Slib$SlibCgl* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+	$(COPYREC) dependencies$Sinstall$Slib$SlibClp* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+	$(COPYREC) dependencies$Sinstall$Slib$SlibOsi* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+	$(COPYREC) dependencies$Sinstall$Slib$SlibCoinUtils* $(PYPI_ARCHIVE_TEMP_DIR)$Sortools
+endif
 
 OR_TOOLS_PYTHON_GEN_SCRIPTS = $(wildcard $(GEN_DIR)/ortools/*/*.py) $(wildcard $(GEN_DIR)/ortools/*/*.cc)
 $(PYPI_ARCHIVE_TEMP_DIR): $(OR_TOOLS_PYTHON_GEN_SCRIPTS)
