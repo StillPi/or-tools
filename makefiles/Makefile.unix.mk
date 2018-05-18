@@ -149,7 +149,10 @@ ifeq ($(PLATFORM),LINUX)
   PRE_LIB = -L$(OR_ROOT_FULL)/lib -l
   #PRE_LIB = -Wl,-rpath $(OR_ROOT_FULL)/lib -L$(OR_ROOT_FULL)/lib -l
   POST_LIB =
-  LINK_FLAGS = -Wl,-rpath,"\$$ORIGIN:\$$ORIGIN/../lib:\$$ORIGIN/../dependencies/install/lib"
+  LINK_FLAGS = \
+ -Wl,-rpath,"\$$ORIGIN" \
+ -Wl,-rpath,"\$$ORIGIN/../lib" \
+ -Wl,-rpath,"\$$ORIGIN/../dependencies/install/lib"
   PYTHON_LDFLAGS = \
  -Wl,-rpath,"\$$ORIGIN" \
  -Wl,-rpath,"\$$ORIGIN/../../ortools" \
