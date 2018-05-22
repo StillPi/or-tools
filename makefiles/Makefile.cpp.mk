@@ -788,8 +788,7 @@ $(BIN_DIR)/sat_runner$E: $(OR_TOOLS_LIBS) $(OBJ_DIR)/sat/sat_runner.$O
 	$(CCC) $(CFLAGS) $(OBJ_DIR)$Ssat$Ssat_runner.$O $(OR_TOOLS_LNK) $(OR_TOOLS_LDFLAGS) $(EXE_OUT)$(BIN_DIR)$Ssat_runner$E
 
 # OR Tools unique library.
-
-$(LIB_DIR)/$(LIB_PREFIX)ortools.$L: \
+$(OR_TOOLS_LIBS): \
     $(BASE_LIB_OBJS) \
     $(PORT_LIB_OBJS) \
     $(UTIL_LIB_OBJS) \
