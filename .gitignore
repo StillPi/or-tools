@@ -68,6 +68,7 @@ tools/docker/export
 bin/*.exe
 bin/*.app
 
+venv
 *build*/*
 .idea/*
 .idea/
