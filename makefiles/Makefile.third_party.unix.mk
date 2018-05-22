@@ -121,6 +121,7 @@ dependencies/install/lib/libgflags.$L: dependencies/sources/gflags-$(GFLAGS_TAG)
   $(CMAKE) --build build_cmake --target install
 
 dependencies/sources/gflags-$(GFLAGS_TAG): | dependencies/sources
+	-$(DELREC) dependencies/sources/gflags-$(GFLAGS_TAG)
 	git clone --quiet -b v$(GFLAGS_TAG) https://github.com/gflags/gflags.git dependencies/sources/gflags-$(GFLAGS_TAG)
 
 GFLAGS_INC = -I$(UNIX_GFLAGS_DIR)/include
@@ -153,6 +154,7 @@ dependencies/install/lib/libglog.$L: dependencies/install/lib/libgflags.$L depen
   $(CMAKE) --build build_cmake --target install
 
 dependencies/sources/glog-$(GLOG_TAG): | dependencies/sources
+	-$(DELREC) dependencies/sources/glog-$(GLOG_TAG)
 	git clone --quiet -b v$(GLOG_TAG) https://github.com/google/glog.git dependencies/sources/glog-$(GLOG_TAG)
 
 GLOG_INC = -I$(UNIX_GLOG_DIR)/include
@@ -187,6 +189,7 @@ dependencies/install/lib/libprotobuf.$L: dependencies/install/lib/libglog.$L dep
   $(CMAKE) --build build_cmake --target install
 
 dependencies/sources/protobuf-$(PROTOBUF_TAG): patches/protobuf.patch | dependencies/sources
+	-$(DELREC) dependencies/sources/protobuf-$(PROTOBUF_TAG)
 	git clone --quiet -b v$(PROTOBUF_TAG) https://github.com/google/protobuf.git dependencies/sources/protobuf-$(PROTOBUF_TAG)
 	cd dependencies/sources/protobuf-$(PROTOBUF_TAG) && \
     git apply $(OR_TOOLS_TOP)/patches/protobuf.patch
@@ -300,7 +303,8 @@ ifeq ($(PLATFORM),MACOSX)
 	install_name_tool -add_rpath @loader_path/../lib dependencies/install/bin/cbc
 endif
 
-dependencies/sources/Cbc-$(CBC_TAG): | dependencies/sources
+$(CBC_SRCDIR): | dependencies/sources
+	-$(DELREC) $(CBC_SRCDIR)
 	git clone --quiet -b releases/$(CBC_TAG) https://github.com/coin-or/Cbc.git dependencies/sources/Cbc-$(CBC_TAG)
 
 # This is needed to find CBC include files.
@@ -343,7 +347,8 @@ ifeq ($(PLATFORM),MACOSX)
 	install_name_tool -add_rpath @loader_path dependencies/install/lib/libCgl.$L
 endif
 
-dependencies/sources/Cgl-$(CGL_TAG): | dependencies/sources
+$(CGL_SRCDIR): | dependencies/sources
+	-$(DELREC) $(CGL_SRCDIR)
 	git clone --quiet -b releases/$(CGL_TAG) https://github.com/coin-or/Cgl.git $(CGL_SRCDIR)
 
 # This is needed to find CGL include files.
@@ -409,6 +414,7 @@ ifeq ($(PLATFORM),MACOSX)
 endif
 
 $(CLP_SRCDIR): | dependencies/sources
+	-$(DELREC) $(CLP_SRCDIR)
 	git clone --quiet -b releases/$(CLP_TAG) https://github.com/coin-or/Clp.git $(CLP_SRCDIR)
 
 # This is needed to find CLP include files.
@@ -461,6 +467,7 @@ ifeq ($(PLATFORM),MACOSX)
 endif
 
 $(OSI_SRCDIR): | dependencies/sources
+	-$(DELREC) $(OSI_SRCDIR)
 	git clone --quiet -b releases/$(OSI_TAG) https://github.com/coin-or/Osi.git $(OSI_SRCDIR)
 
 # This is needed to find OSI include files.
@@ -503,6 +510,7 @@ ifeq ($(PLATFORM),MACOSX)
 endif
 
 $(COINUTILS_SRCDIR): | dependencies/sources
+	-$(DELREC) $(COINUTILS_SRCDIR)
 	git clone --quiet -b releases/$(COINUTILS_TAG) https://github.com/coin-or/CoinUtils.git $(COINUTILS_SRCDIR)
 
 # This is needed to find COINUTILS include files.
