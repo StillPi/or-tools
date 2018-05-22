@@ -38,7 +38,6 @@ endif
 
 .PHONY: python # Build Python OR-Tools.
 .PHONY: test_python # Test Python OR-Tools using various examples.
-.PHONY: install_python # Install Python OR-Tools on the host system
 ifneq ($(PYTHON_EXECUTABLE),)
 python: \
 	ortoolslibs \
@@ -53,9 +52,6 @@ python: \
 
 test_python: test_python_examples
 
-install_python: pypi_archive
-	cd "$(PYPI_ARCHIVE_TEMP_DIR)$Sortools" && "$(PYTHON_EXECUTABLE)" setup.py install --user
-
 BUILT_LANGUAGES +=, Python$(PYTHON_VERSION)
 else
 python:
@@ -63,7 +59,6 @@ python:
 	$(warning Cannot find '$(PYTHON_COMPILER)' command which is needed for build. Please make sure it is installed and in system path.)
 
 test_python: python
-install_python: python
 endif
 
 .PHONY: clean_python # Clean Python output from previous build.
@@ -128,7 +123,6 @@ clean_python:
 
 .PHONY: install_python_modules
 install_python_modules: dependencies/sources/protobuf-$(PROTOBUF_TAG)/python/google/protobuf/descriptor_pb2.py
-
 dependencies/sources/protobuf-$(PROTOBUF_TAG)/python/google/protobuf/descriptor_pb2.py: \
 dependencies/sources/protobuf-$(PROTOBUF_TAG)/python/setup.py
 ifeq ($(SYSTEM),win)
@@ -703,6 +697,14 @@ endif
 ifeq ($(SYSTEM),win)
 	cd $(PYPI_ARCHIVE_TEMP_DIR)$Sortools && "$(PYTHON_EXECUTABLE)" setup.py bdist_wininst
 endif
+
+.PHONY: install_python # Install Python OR-Tools on the host system
+install_python: pypi_archive
+	cd "$(PYPI_ARCHIVE_TEMP_DIR)$Sortools" && "$(PYTHON_EXECUTABLE)" setup.py install --user
+
+.PHONY: uninstall_python # Uninstall Python OR-Tools from the host system
+uninstall_python:
+	"$(PYTHON_EXECUTABLE)" -m pip uninstall ortools
 
 pypi_upload: pypi_archive
 	@echo Uploading Pypi module for "$(PYTHON_EXECUTABLE)".
