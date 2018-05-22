@@ -441,11 +441,11 @@ else
 endif
 
 # pywraprcpsp
-PYRCPSP_LIBS = $(LIB_DIR)/_pywraprcpsp.$(SWIG_LIB_SUFFIX)
+PYDATA_LIBS = $(LIB_DIR)/_pywraprcpsp.$(SWIG_LIB_SUFFIX)
 ifeq ($(PLATFORM),MACOSX)
 PYRCPSP_LDFLAGS = -install_name @rpath/_pywraprcpsp.$(SWIG_LIB_SUFFIX) #
 endif
-pyrcpsp: $(PYRCPSP_LIBS)
+pyrcpsp: $(PYDATA_LIBS)
 
 $(GEN_DIR)/ortools/data/rcpsp_pb2.py: \
  $(SRC_DIR)/ortools/data/rcpsp.proto
@@ -473,7 +473,7 @@ $(OBJ_DIR)/swig/rcpsp_python_wrap.$O: \
  -c $(GEN_DIR)$Sortools$Sdata$Srcpsp_python_wrap.cc \
  $(OBJ_OUT)$(OBJ_DIR)$Sswig$Srcpsp_python_wrap.$O
 
-$(PYRCPSP_LIBS): $(OBJ_DIR)/swig/rcpsp_python_wrap.$O $(OR_TOOLS_LIBS)
+$(PYDATA_LIBS): $(OBJ_DIR)/swig/rcpsp_python_wrap.$O $(OR_TOOLS_LIBS)
 	$(DYNAMIC_LD) \
  $(PYRCPSP_LDFLAGS) \
  $(LD_OUT)$(LIB_DIR)$S_pywraprcpsp.$(SWIG_LIB_SUFFIX) \
@@ -485,11 +485,11 @@ $(PYRCPSP_LIBS): $(OBJ_DIR)/swig/rcpsp_python_wrap.$O $(OR_TOOLS_LIBS)
 ifeq ($(SYSTEM),win)
 	copy $(LIB_DIR)$S_pywraprcpsp.$(SWIG_LIB_SUFFIX) $(GEN_DIR)\\ortools\\data\\_pywraprcpsp.pyd
 else
-	cp $(PYRCPSP_LIBS) $(GEN_DIR)/ortools/data
+	cp $(PYDATA_LIBS) $(GEN_DIR)/ortools/data
 endif
 
 # Run a single example
-rpy: $(PYLP_LIBS) $(PYCP_LIBS) $(PYGRAPH_LIBS) $(PYALGORITHMS_LIBS) $(PYSAT_LIBS) $(PYRCPSP_LIBS) $(EX)
+rpy: $(PYLP_LIBS) $(PYCP_LIBS) $(PYGRAPH_LIBS) $(PYALGORITHMS_LIBS) $(PYSAT_LIBS) $(PYDATA_LIBS) $(EX)
 	$(SET_PYTHONPATH) "$(PYTHON_EXECUTABLE)" $(EX) $(ARGS)
 
 .PHONY: python_examples_archive # Build stand-alone Python examples archive file for redistribution.
