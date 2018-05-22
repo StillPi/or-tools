@@ -194,16 +194,6 @@ dependencies/sources/protobuf-$(PROTOBUF_TAG): patches/protobuf.patch | dependen
 	cd dependencies/sources/protobuf-$(PROTOBUF_TAG) && \
     git apply $(OR_TOOLS_TOP)/patches/protobuf.patch
 
-# Install Java protobuf
-dependencies/install/lib/protobuf.jar: build_protobuf
-	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java && \
-	  ../../../install/bin/protoc --java_out=core/src/main/java -I../src \
-	  ../src/google/protobuf/descriptor.proto
-	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && \
-		$(JAVAC_BIN) com/google/protobuf/*java
-	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && \
-		$(JAR_BIN) cvf ../../../../../../../install/lib/protobuf.jar com/google/protobuf/*class
-
 # This is needed to find protocol buffers.
 PROTOBUF_INC = -I$(UNIX_PROTOBUF_DIR)/include
 PROTOBUF_PROTOC_INC = $(PROTOBUF_INC)
@@ -231,6 +221,16 @@ else
  PROTOC = \
 DYLD_LIBRARY_PATH="$(UNIX_PROTOBUF_DIR)/lib":$(DYLD_LIBRARY_PATH) $(PROTOC_BINARY)
 endif
+
+# Install Java protobuf
+dependencies/install/lib/protobuf.jar: | dependencies/install/lib/libprotobuf.$L
+	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java && \
+ $(PROTOC) --java_out=core/src/main/java -I../src \
+ ../src/google/protobuf/descriptor.proto
+	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && \
+ $(JAVAC_BIN) com/google/protobuf/*java
+	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && \
+ $(JAR_BIN) cvf ../../../../../../../install/lib/protobuf.jar com/google/protobuf/*class
 
 ############################################
 ##  Install Patchelf on linux platforms.  ##
@@ -268,7 +268,7 @@ dependencies/install/lib/libCbc.$L: dependencies/install/lib/libCgl.$L $(CBC_SRC
     --disable-dependency-tracking \
     --enable-dependency-linking \
     --enable-cbc-parallel \
-    ADD_CXXFLAGS="-w $(MAC_VERSION)"
+    ADD_CXXFLAGS="-w -DCBC_THREAD_SAFE -DCBC_NO_INTERRUPT $(MAC_VERSION)"
 	$(SET_COMPILER) make -C $(CBC_SRCDIR)
 	$(SET_COMPILER) make install -C $(CBC_SRCDIR)
 ifeq ($(PLATFORM),LINUX)
