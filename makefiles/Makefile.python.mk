@@ -549,24 +549,52 @@ $(PYPI_ARCHIVE_TEMP_DIR)/ortools/LICENSE-2.0.txt: LICENSE-2.0.txt | $(PYPI_ARCHI
 
 PYTHON_SETUP_DEPS=
 ifeq ($(UNIX_GFLAGS_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-  PYTHON_SETUP_DEPS += , 'libgflags.$L.2.2'
+  ifeq ($(PLATFORM),MACOSX)
+    PYTHON_SETUP_DEPS += , 'libgflags.2.2.$L'
+  endif
+  ifeq ($(PLATFORM),LINUX)
+    PYTHON_SETUP_DEPS += , 'libgflags.$L.2.2'
+  endif
 endif
 ifeq ($(UNIX_GLOG_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-  PYTHON_SETUP_DEPS += , 'libglog.$L.0.3.5'
+  ifeq ($(PLATFORM),MACOSX)
+    PYTHON_SETUP_DEPS += , 'libglog.0.3.5.$L'
+  endif
+  ifeq ($(PLATFORM),LINUX)
+    PYTHON_SETUP_DEPS += , 'libglog.$L.0.3.5'
+  endif
 endif
 ifeq ($(UNIX_PROTOBUF_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-  PYTHON_SETUP_DEPS += , 'libprotobuf.$L.3.5.1'
+  ifeq ($(PLATFORM),MACOSX)
+    PYTHON_SETUP_DEPS += , 'libprotobuf.3.5.1.$L'
+  endif
+  ifeq ($(PLATFORM),LINUX)
+    PYTHON_SETUP_DEPS += , 'libprotobuf.$L.3.5.1'
+  endif
 endif
 ifeq ($(UNIX_CBC_DIR),$(OR_TOOLS_TOP)/dependencies/install)
-  PYTHON_SETUP_DEPS += , 'libCbcSolver.$L.3'
-  PYTHON_SETUP_DEPS += , 'libCbc.$L.3'
-  PYTHON_SETUP_DEPS += , 'libOsiCbc.$L.3'
-  PYTHON_SETUP_DEPS += , 'libCgl.$L.1'
-  PYTHON_SETUP_DEPS += , 'libClpSolver.$L.1'
-  PYTHON_SETUP_DEPS += , 'libClp.$L.1'
-  PYTHON_SETUP_DEPS += , 'libOsiClp.$L.1'
-  PYTHON_SETUP_DEPS += , 'libOsi.$L.1'
-  PYTHON_SETUP_DEPS += , 'libCoinUtils.$L.3'
+  ifeq ($(PLATFORM),MACOSX)
+    PYTHON_SETUP_DEPS += , 'libCbcSolver.3.$L'
+    PYTHON_SETUP_DEPS += , 'libCbc.3.$L'
+    PYTHON_SETUP_DEPS += , 'libOsiCbc.3.$L'
+    PYTHON_SETUP_DEPS += , 'libCgl.1.$L'
+    PYTHON_SETUP_DEPS += , 'libClpSolver.1.$L'
+    PYTHON_SETUP_DEPS += , 'libClp.1.$L'
+    PYTHON_SETUP_DEPS += , 'libOsiClp.1.$L'
+    PYTHON_SETUP_DEPS += , 'libOsi.1.$L'
+    PYTHON_SETUP_DEPS += , 'libCoinUtils.3.$L'
+  endif
+  ifeq ($(PLATFORM),LINUX)
+    PYTHON_SETUP_DEPS += , 'libCbcSolver.$L.3'
+    PYTHON_SETUP_DEPS += , 'libCbc.$L.3'
+    PYTHON_SETUP_DEPS += , 'libOsiCbc.$L.3'
+    PYTHON_SETUP_DEPS += , 'libCgl.$L.1'
+    PYTHON_SETUP_DEPS += , 'libClpSolver.$L.1'
+    PYTHON_SETUP_DEPS += , 'libClp.$L.1'
+    PYTHON_SETUP_DEPS += , 'libOsiClp.$L.1'
+    PYTHON_SETUP_DEPS += , 'libOsi.$L.1'
+    PYTHON_SETUP_DEPS += , 'libCoinUtils.$L.3'
+  endif
 endif
 
 $(PYPI_ARCHIVE_TEMP_DIR)/ortools/setup.py: tools/setup.py | $(PYPI_ARCHIVE_TEMP_DIR)/ortools
